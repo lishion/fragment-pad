@@ -23,7 +23,8 @@ export default {
     props:['item'],
     methods:{
         save(){
-            if(this.item.value.title.match(/\s+/)){
+            var title = this.item.value.title
+            if(title.match(/^\s+?$/)||title===""){
                 this.item.value.title = "我是不是忘了写标题??"
             }
             this.item.value.marked_content = marked(this.item.value.content)
