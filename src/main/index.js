@@ -45,3 +45,14 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore()
+    mainWindow.focus()
+  }
+})
+
+if (isSecondInstance) {
+  app.quit()
+}
