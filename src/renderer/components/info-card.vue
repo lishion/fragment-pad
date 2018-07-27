@@ -1,6 +1,6 @@
 <template>
     <el-card class="box-card" style="margin-bottom: 18px" shadow="hover" header-style="background-color:#409EFF">
-        <div slot="header" class="clearfix" @dblclick="$emit('on-modify')" >
+        <div slot="header" class="clearfix">
             <el-row :gutter="20" type="flex" justify="space-between">
                 <el-col :span="16">
                     {{item.value.title}}
