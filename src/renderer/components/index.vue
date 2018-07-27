@@ -10,7 +10,7 @@
                         <el-input
                             v-model="keywords"
                             placeholder="输入以搜索"
-                            prefix-icon="el-icon-search" 
+                            :prefix-icon="icon" 
                         >
                         </el-input>
                     </div>
@@ -79,7 +79,8 @@ export default {
       messageBox:new MessageBox(this),
       uuid:require('uuid'),
       status:new Status(this),
-      keywords:""
+      keywords:"",
+      icon:"el-icon-view"
     };
   },
   methods: {
@@ -144,6 +145,7 @@ export default {
             if(this.status.state === SEARCH){
                 this.status.switchViewStateToNormal()
                 this.reload()
+                this.icon = "el-icon-view"
             }
         }
     },
@@ -158,6 +160,7 @@ export default {
         leveldb.search(keyword,(data)=>{
             this.items.push(data)
         })
+        this.icon = "el-icon-search"
     }
   }
 };
