@@ -34,13 +34,33 @@ class LevelDb{
             func(data)
         })
     }
-
+    replaceMany(string,keywords,replaceFunc){
+        var pattern
+        if(keywords.indexOf(" ")!=-1){
+            var eachKeyword = keywords.split(" ")
+            eachKeyword = eachKeyword.map((item,index,input)=>{
+                return `(${item})`
+            })
+            pattern = RegExp(eachKeyword.join("|"),'ig')
+        }else{
+            pattern = RegExp(keywords,'ig')
+        }
+    
+        return string.replace(pattern,replaceFunc)
+    }
     search(keywords,func){
         var option = {"reverse":true,"limit":-1}
         this.levelDb.createReadStream(option).on('data',(data)=>{
-            if(data.value.content.indexOf(keywords)!==-1){
+            var title = data.value.title
+            var marked_content = data.value.marked_content
+            var replacedTitle = this.replaceMany(title,keywords,keyword => `[[${keyword}]]`)
+            var replacedContent = this.replaceMany(marked_content,keywords,keyword => `<span style='background:yellow'>${keyword}</span>`)
+            if(replacedContent!==marked_content||replacedTitle!==title){
+                data.value.title = replacedTitle
+                data.value.marked_content = replacedContent
                 func(data)
-            }
+            } 
+             
         })
     }
 }
@@ -116,10 +136,10 @@ class Status{
     switchToView (item=null){
        if(item!==null){
         this.context.$set(this.context.edit_able,item.key,false)
-        this.editingItem = null
-        this.canDoNext = true
-        this.lastState = this.state
        }
+       this.canDoNext = true
+       this.lastState = this.state
+       this.editingItem = null
        this.state = this.viewState
        return this
     }

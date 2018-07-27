@@ -82,11 +82,10 @@ export default {
   methods: {
     loadData() {
       leveldb.getLatest(5, this.latestKey, data => {
-          console.info(this.latestKey)
         if(this.latestKey !== data.key){
             this.items.push(data);
+            this.latestKey = data.key;
         }
-        this.latestKey = data.key;
       });
     },
     loadMore: function() {
@@ -110,9 +109,11 @@ export default {
       this.items = [] // 清空数据
       this.latestKey = null //从最新开始
       this.loadData()
+      this.status.switchToView()
     },
     addEmptyCard(){
         var item = this.getEmptyItem()
+        console.info(this.status.editingItem)
         this.status
             .switchToADD(item)
             .then((item,state)=>this.items.unshift(item))
@@ -136,7 +137,6 @@ export default {
                 }
             })
         }else{
-            console.info(this.status.state)
             if(this.status.state === SEARCH){
                 this.status.switchViewStateToNormal()
                 this.reload()
@@ -152,12 +152,8 @@ export default {
         this.items = [] // 清空数据
         this.latestKey = null //从最新开始
         leveldb.search(keyword,(data)=>{
-            var emWord = `<span style='background:yellow'>${keyword}</span>`
-            var emContent = data.value.marked_content.replace(keyword,emWord)
-            data.value.marked_content = emContent
             this.items.push(data)
         })
-        console.info(this.status.state)
     }
   }
 };
