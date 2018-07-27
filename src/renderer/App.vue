@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :style="{backgroundImage: 'url(' + bg_url + ')',height:clientHeight}">
+  <div id="app" :style="{backgroundImage: 'url(' + bg_url + ')',height:clientHeight,backgroundAttachment:attachment}">
    
     <!-- 使得去掉窗口以后可以拖动 -->
     <div style="height:50px;-webkit-app-region: drag" ></div>
@@ -15,17 +15,24 @@
     data:function(){
       return {
         bg_url:bg,
-        clientHeight:"600px"
+        clientHeight:"600px",
+        attachment:"fixed"
         }
     },
     mounted() {
-    // 动态设置背景图的高度为浏览器可视区域高度
-    // 首先在Virtual DOM渲染数据时，设置下背景图的高度．
-    // this.clientHeight.height = `${document.documentElement.clientHeight}px`;
-    // 然后监听window的resize事件．在浏览器窗口变化时再设置下背景图高度．
+    
+    //监听 resize 与 onscroll 事件，动态调整div大小，避免背景图空白
     const that = this;
+    var rollHeight = 0
+    var clientHeight = 0
     window.onresize = function temp() {
-        that.clientHeight = `${document.documentElement.clientHeight}px`;
+        clientHeight = document.documentElement.clientHeight
+        that.clientHeight = `${document.documentElement.clientHeight + window.scrollY}px`;
+    };
+    window.onscroll = function scroll(){
+       let rollHeigth = window.scrollY
+       that.clientHeight = `${document.documentElement.clientHeight + window.scrollY}px`
+        
     };
 },
 
