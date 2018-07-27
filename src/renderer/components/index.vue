@@ -1,8 +1,8 @@
 <template>
     <el-container>
-        <el-header> 
-            <el-row :gutter="20" type="flex" justify="center">
-                <el-col :span="16">
+        <el-header id="header"> 
+            <el-row type="flex" justify="center">
+                <el-col :span="10" style="width:60%">
                     <div class="grid-content bg-purple" 
                     @keydown.enter="search(keywords)" 
                     @keydown.esc="cancel(null)"
@@ -15,7 +15,7 @@
                         </el-input>
                     </div>
                 </el-col>
-                <el-col :span="4" >  
+                <el-col :span="4" push="3">  
                     <div class="grid-content" >
                         <el-button slot="reference" icon="el-icon-plus" plain type="text" @click="addEmptyCard"></el-button>
                     </div>
@@ -23,7 +23,7 @@
             </el-row>
         </el-header>
 
-        <el-main>
+        <el-main style="margin-top: 60px">
                 
                 <div  
                     v-for="(item) in items"  
@@ -54,10 +54,22 @@
                 </div>
         </el-main>
 
-        <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy"></div>
-
+        <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy"></div>   
     </el-container>
 </template>
+
+<style scoped>
+    #header{
+        width: 100%;
+        height: 60px;
+        position: fixed;
+        left: 0;
+        top: 50px;
+        
+    }
+</style>
+
+
 <script>
 
 import infocard from "./info-card";
