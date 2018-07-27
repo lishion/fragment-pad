@@ -38,14 +38,17 @@
                     </addcard>
                     
                     <infocard   
-                    @on-success="reload" 
-                    @on-modify="modify(item)"
-                    :item="item"
-                    v-else
-                    >
+                        @on-success="reload" 
+                        @on-modify="modify(item)"
+                        :item="item"
+                        v-else
+                    >   
+                        <template slot="title">
+                            <div v-html="item.value.rendered_title" v-if="item.value.rendered_title"></div>
+                            <div v-else>{{item.value.title}}</div>
+                        </template>
                         <template slot="content">
-                            <div v-html="item.value.marked_content">
-                            </div>
+                            <div v-html="item.value.marked_content"></div>
                         </template>
                     </infocard>
                 </div>
@@ -119,6 +122,7 @@ export default {
             .then((item,state)=>this.items.unshift(item))
     },
     save(item) {
+        delete item.rendered_title
         leveldb.put(item,(err)=>{
            this.messageBox.showMessage(err)
            if(!err){

@@ -3,7 +3,7 @@
         <div slot="header" class="clearfix">
             <el-row :gutter="20" type="flex" justify="space-between">
                 <el-col :span="16">
-                    {{item.value.title}}
+                    <slot name="title"></slot>
                 </el-col>
                 <el-col :span="4">
                     <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="deleteItem(item.key)"></el-button>

@@ -50,13 +50,14 @@ class LevelDb{
     }
     search(keywords,func){
         var option = {"reverse":true,"limit":-1}
+        const renderHighlight = word => `<span style='background:yellow'>${word}</span>`
         this.levelDb.createReadStream(option).on('data',(data)=>{
             var title = data.value.title
             var marked_content = data.value.marked_content
-            var replacedTitle = this.replaceMany(title,keywords,keyword => `[[${keyword}]]`)
-            var replacedContent = this.replaceMany(marked_content,keywords,keyword => `<span style='background:yellow'>${keyword}</span>`)
+            var replacedTitle = this.replaceMany(title,keywords,renderHighlight)
+            var replacedContent = this.replaceMany(marked_content,keywords,renderHighlight)
             if(replacedContent!==marked_content||replacedTitle!==title){
-                data.value.title = replacedTitle
+                data.value.rendered_title = replacedTitle
                 data.value.marked_content = replacedContent
                 func(data)
             } 
