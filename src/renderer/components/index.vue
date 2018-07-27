@@ -1,0 +1,165 @@
+<template>
+    <el-container>
+        <el-header> 
+            <el-row :gutter="20" type="flex" justify="center">
+                <el-col :span="16">
+                    <div class="grid-content bg-purple" 
+                    @keydown.enter="search(keywords)" 
+                    @keydown.esc="cancel(null)"
+                    >
+                        <el-input
+                            v-model="keywords"
+                            placeholder="输入以搜索"
+                            prefix-icon="el-icon-search" 
+                        >
+                        </el-input>
+                    </div>
+                </el-col>
+                <el-col :span="4" >  
+                    <div class="grid-content" >
+                        <el-button slot="reference" icon="el-icon-plus" plain type="text" @click="addEmptyCard"></el-button>
+                    </div>
+                </el-col>
+            </el-row>
+        </el-header>
+
+        <el-main>
+                
+                <div  
+                    v-for="(item) in items"  
+                    :key="item.key" 
+                    @keydown.esc="cancel(item)"
+                >
+                    <addcard 
+                        v-if="edit_able[item.key]" 
+                        :item=item
+                        @on-save="save"
+                    >
+                    </addcard>
+                    
+                    <infocard   
+                    @on-success="reload" 
+                    @on-modify="modify(item)"
+                    :item="item"
+                    v-else
+                    >
+                        <template slot="content">
+                            <div v-html="item.value.marked_content">
+                            </div>
+                        </template>
+                    </infocard>
+                </div>
+        </el-main>
+
+        <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy"></div>
+
+    </el-container>
+</template>
+<script>
+
+import infocard from "./info-card";
+import addcard from "./add-card";
+import infiniteScroll from "vue-infinite-scroll";
+import {LevelDb,MessageBox,Status,ADD,SEARCH} from '../assets/js/utils'
+
+let leveldb = LevelDb.getInstance();
+
+export default {
+  name: "index",
+  components: { infocard, addcard },
+  directives: { infiniteScroll },
+  latestKey: null,
+  data: function() {
+    return {
+      items: [],
+      edit_able :{},
+      messageBox:new MessageBox(this),
+      uuid:require('uuid'),
+      status:new Status(this),
+      keywords:""
+    };
+  },
+  methods: {
+    loadData() {
+      leveldb.getLatest(5, this.latestKey, data => {
+          console.info(this.latestKey)
+        if(this.latestKey !== data.key){
+            this.items.push(data);
+        }
+        this.latestKey = data.key;
+      });
+    },
+    loadMore: function() {
+      if(this.status.state !== SEARCH){
+          //滚动加载获取数据
+        this.loadData();
+      }
+    },
+    getEmptyItem(){
+        return {
+            "key":this.uuid.v1(),
+            "value":{
+                "title":"",
+                "content":"",
+                "marked_content":""
+            }
+        }
+    },
+    reload(){
+      // 重新加载页面
+      this.items = [] // 清空数据
+      this.latestKey = null //从最新开始
+      this.loadData()
+    },
+    addEmptyCard(){
+        var item = this.getEmptyItem()
+        this.status
+            .switchToADD(item)
+            .then((item,state)=>this.items.unshift(item))
+    },
+    save(item) {
+        leveldb.put(item,(err)=>{
+           this.messageBox.showMessage(err)
+           if(!err){
+               this.status.switchToView(item)
+               this.reload()
+           }
+        })
+    },
+    cancel(item = null){
+        if(item!==null){ //取消
+            this.status
+            .switchToView(item)
+            .then((item,state)=>{
+                if(state==ADD){
+                    this.items.shift()
+                }
+            })
+        }else{
+            console.info(this.status.state)
+            if(this.status.state === SEARCH){
+                this.status.switchViewStateToNormal()
+                this.reload()
+            }
+        }
+    },
+    modify(item){
+        this.status.switchToModify(item)
+    },
+    search(keyword){
+        this.status.switchViewStateToSearch()
+        // 重新加载页面
+        this.items = [] // 清空数据
+        this.latestKey = null //从最新开始
+        leveldb.search(keyword,(data)=>{
+            var emWord = `<span style='background:yellow'>${keyword}</span>`
+            var emContent = data.value.marked_content.replace(keyword,emWord)
+            data.value.marked_content = emContent
+            this.items.push(data)
+        })
+        console.info(this.status.state)
+    }
+  }
+};
+</script>
+
