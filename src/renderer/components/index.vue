@@ -15,7 +15,7 @@
                         </el-input>
                     </div>
                 </el-col>
-                <el-col :span="4" push="3">  
+                <el-col :span="4" :push="3">  
                     <div class="grid-content" >
                         <el-button slot="reference" icon="el-icon-plus" plain type="text" @click="addEmptyCard"></el-button>
                     </div>
@@ -38,7 +38,7 @@
                     </addcard>
                     
                     <infocard   
-                        @on-success="reload" 
+                        @on-delete-success="onDeleteSuccess" 
                         @on-modify="modify(item)"
                         :item="item"
                         v-else
@@ -64,8 +64,7 @@
         height: 60px;
         position: fixed;
         left: 0;
-        top: 50px;
-        
+        top: 50px;     
     }
 </style>
 
@@ -75,7 +74,7 @@
 import infocard from "./info-card";
 import addcard from "./add-card";
 import infiniteScroll from "vue-infinite-scroll";
-import {LevelDb,MessageBox,Status,ADD,SEARCH} from '../assets/js/utils'
+import {LevelDb,MessageBox} from '../assets/js/utils'
 
 let leveldb = LevelDb.getInstance();
 
@@ -90,9 +89,12 @@ export default {
       edit_able :{},
       messageBox:new MessageBox(this),
       uuid:require('uuid'),
-      status:new Status(this),
       keywords:"",
-      icon:"el-icon-view"
+      icon:"el-icon-view",
+      editingItemKey : null,
+      searchMode :false,
+      canInput : true,
+      canDelete : true
     };
   },
   methods: {
@@ -105,13 +107,13 @@ export default {
       });
     },
     loadMore: function() {
-      if(this.status.state !== SEARCH){
-          //滚动加载获取数据
-        this.loadData();
-      }
+        if(!this.searchMode){
+            this.loadData();
+        }
     },
     getEmptyItem(){
         return {
+            "isNew":true,
             "key":this.uuid.v1(),
             "value":{
                 "title":"",
@@ -125,54 +127,68 @@ export default {
       this.items = [] // 清空数据
       this.latestKey = null //从最新开始
       this.loadData()
-      this.status.switchToView()
+    },
+    editMode(key){
+        
+        this.editingItemKey = key
+        this.$set(this.edit_able,this.editingItemKey,true)
+    },
+    exitEditMode(){
+        this.$set(this.edit_able,this.editingItemKey,false)
+        this.editingItemKey = null
     },
     addEmptyCard(){
-        var item = this.getEmptyItem()
-        console.info(this.status.editingItem)
-        this.status
-            .switchToADD(item)
-            .then((item,state)=>this.items.unshift(item))
+        console.info(this.editingItemKey)
+        if(this.editingItemKey == null){
+            var item = this.getEmptyItem()
+            this.items.unshift(item)
+            this.editMode(item.key)
+        }
     },
     save(item) {
-        delete item.rendered_title
+        delete item.value.rendered_title
+        delete item.isNew
+        console.info(item)
+
         leveldb.put(item,(err)=>{
-           this.messageBox.showMessage(err)
-           if(!err){
-               this.status.switchToView(item)
-               this.reload()
-           }
-        })
-    },
-    cancel(item = null){
-        if(item!==null){ //取消
-            this.status
-            .switchToView(item)
-            .then((item,state)=>{
-                if(state==ADD){
-                    this.items.shift()
-                }
-            })
-        }else{
-            if(this.status.state === SEARCH){
-                this.status.switchViewStateToNormal()
+            this.messageBox.showMessage(err)
+            if(!err){
+                this.exitEditMode()
                 this.reload()
-                this.icon = "el-icon-view"
             }
+        }) 
+        console.info(this.editingItemKey)
+    },
+
+    cancel(item = null){
+        if(item !== null){ //取消编辑操作
+            if(this.items[0].isNew === true){
+                this.items.shift()
+            } 
+            this.exitEditMode()
+        }else{
+            this.searchMode = false
+            this.reload()
+            this.icon = "el-icon-view"
         }
     },
     modify(item){
-        this.status.switchToModify(item)
+        if(this.editingItemKey == null && this.searchMode == false){
+            this.editMode(item.key)
+        }
     },
     search(keyword){
-        this.status.switchViewStateToSearch()
-        // 重新加载页面
+        this.cancel(this.editingItemKey)
+        this.searchMode = true
         this.items = [] // 清空数据
-        this.latestKey = null //从最新开始
         leveldb.search(keyword,(data)=>{
             this.items.push(data)
         })
         this.icon = "el-icon-search"
+    },
+    onDeleteSuccess(){
+        this.cancel(this.editingItemKey)
+        this.reload()
     }
   }
 };

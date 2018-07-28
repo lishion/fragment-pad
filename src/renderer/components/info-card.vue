@@ -35,7 +35,7 @@ export default {
             levelDb.deleteById(id,(err)=>{
                 this.messageBex.showMessage(err)
                 if(!err){
-                    this.$emit('on-success')
+                    this.$emit('on-delete-success')
                 }
             })
         }

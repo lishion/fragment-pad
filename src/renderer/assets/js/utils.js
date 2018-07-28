@@ -1,3 +1,4 @@
+import { normalize } from 'path';
 
 class LevelDb{
     
@@ -68,7 +69,6 @@ class LevelDb{
 
 LevelDb.instance = null
 
-
 class MessageBox{
     constructor(context){
         this.context = context
@@ -92,70 +92,6 @@ class MessageBox{
         isSuccess ? this.failed("失败了orz") : this.success("成功啦^^")
     }
 }
-var MODIFY = "modify"
-var ADD = "add" 
-var SEARCH = "search"
-var NORMAL = "normal"
-class Status{
-    constructor(context){
-        this.editingItem = null
-        this.context = context
-        this.canDoNext = false
-        this.viewState = NORMAL
-        this.lastState = NORMAL
-        this.state = this.viewState
-    }
-    switchToModify(item){
-        if(this.editingItem == null){
-            this.state = MODIFY
-            this.context.$set(this.context.edit_able,item.key,true)
-            this.editingItem = item
-            this.canDoNext = true
-        }else{
-            this.canDoNext = false
-        }
-        return this
-    }
-    switchToADD (item) {
-        if(this.editingItem == null){
-            this.state = ADD
-            this.context.$set(this.context.edit_able,item.key,true)
-            this.editingItem = item
-            this.canDoNext = true
-        }else{
-            this.canDoNext = false
-        }
-        return this
-    }
-
-    then(func){
-        if(this.canDoNext){
-            func(this.editingItem,this.lastState)
-        }
-    }
-
-    switchToView (item=null){
-       if(item!==null){
-        this.context.$set(this.context.edit_able,item.key,false)
-       }
-       this.canDoNext = true
-       this.lastState = this.state
-       this.editingItem = null
-       this.state = this.viewState
-       return this
-    }
-
-    switchViewStateToNormal(){
-        this.viewState = NORMAL
-        this.switchToView()
-    }
-
-    switchViewStateToSearch(){
-        this.viewState = SEARCH
-        this.switchToView()
-    }
-}
-
-export { LevelDb,MessageBox,Status,ADD,SEARCH}
+export { LevelDb,MessageBox}
 
 
