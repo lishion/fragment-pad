@@ -1,11 +1,13 @@
 <template>
     <el-container>
+        <!-- header 包括搜索以及添加按钮 -->
         <el-header id="header"> 
             <el-row type="flex" justify="center">
                 <el-col :span="10" style="width:60%">
-                    <div class="grid-content bg-purple" 
-                    @keydown.enter="search(keywords)" 
-                    @keydown.esc="cancel(null)"
+                    <div 
+                        class="grid-content" 
+                        @keydown.enter="search(keywords)" 
+                        @keydown.esc="cancel(null)" 
                     >
                         <el-input
                             v-model="keywords"
@@ -18,19 +20,20 @@
                 </el-col>
                 <el-col :span="4" :push="3">  
                     <div class="grid-content" >
-                        <el-button slot="reference" icon="el-icon-plus" plain type="text" @click="addEmptyCard"></el-button>
+                        <el-button slot="reference" icon="el-icon-plus" type="text"  @click="addEmptyCard" :disabled="searchMode"></el-button>
                     </div>
                 </el-col>
             </el-row>
         </el-header>
-
+        
         <el-main style="margin-top: 60px">
                 
                 <div  
-                    v-for="(item) in items"  
+                    v-for="item in items"  
                     :key="item.key" 
                     @keydown.esc="cancel(item)"
                 >
+                    <!--如果是编辑模式，则现实编辑界面-->
                     <addcard 
                         v-if="edit_able[item.key]" 
                         :item=item
@@ -38,10 +41,12 @@
                     >
                     </addcard>
                     
+                    <!--否则显示普通界面-->
+                    <!--searchMode||editingItemKey 用于控制删除按钮是否可用-->
                     <infocard   
-                        @on-delete-success="onDeleteSuccess" 
+                        @on-delete="onDeleteSuccess" 
                         @on-modify="modify(item)"
-                        :item="item"
+                        :itemKey="item.key"
                         :searchMode="searchMode"
                         :editingItemKey="editingItemKey"
                         v-else
@@ -70,7 +75,6 @@
         top: 50px;     
     }
 </style>
-
 
 <script>
 
@@ -181,7 +185,6 @@ export default {
         }
     },
     search(keyword){
-        this.cancel(this.editingItemKey)
         this.searchMode = true
         this.items = [] // 清空数据
         leveldb.search(keyword,(data)=>{
@@ -189,8 +192,10 @@ export default {
         })
         this.icon = "el-icon-search"
     },
-    onDeleteSuccess(){
-        this.cancel(this.editingItemKey)
+    onDeleteSuccess(key){
+        leveldb.deleteById(key,(err)=>{
+            this.messageBox.showMessage(err)
+        })
         this.reload()
     }
   }

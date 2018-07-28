@@ -6,7 +6,7 @@
                     <slot name="title"></slot>
                 </el-col>
                 <el-col :span="4">
-                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="deleteItem(item.key)" :disabled="searchMode||editingItemKey"></el-button>
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('on-delete',itemKey)" :disabled="searchMode||editingItemKey"></el-button>
                 </el-col>
             </el-row>
         </div>
@@ -17,28 +17,10 @@
 </template>
 
 <script>
-import {LevelDb,MessageBox} from '../assets/js/utils'
 import addcard from './add-card'
-import { constants } from 'http2';
-var levelDb = LevelDb.getInstance()
 export default {
     name:"infocard",
-    props:['item','searchMode','editingItemKey'],
+    props:['itemKey','searchMode','editingItemKey'],
     components:{addcard},
-    data:function(){
-        return {
-            messageBex:new MessageBox(this)
-        }
-    },
-    methods:{
-        deleteItem(id){
-            levelDb.deleteById(id,(err)=>{
-                this.messageBex.showMessage(err)
-                if(!err){
-                    this.$emit('on-delete-success')
-                }
-            })
-        }
-    }
 }
 </script>
