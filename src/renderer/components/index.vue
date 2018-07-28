@@ -11,6 +11,7 @@
                             v-model="keywords"
                             placeholder="输入以搜索"
                             :prefix-icon="icon" 
+                            :disabled="editingItemKey"
                         >
                         </el-input>
                     </div>
@@ -41,6 +42,8 @@
                         @on-delete-success="onDeleteSuccess" 
                         @on-modify="modify(item)"
                         :item="item"
+                        :searchMode="searchMode"
+                        :editingItemKey="editingItemKey"
                         v-else
                     >   
                         <template slot="title">

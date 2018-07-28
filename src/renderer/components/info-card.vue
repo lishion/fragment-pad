@@ -6,7 +6,7 @@
                     <slot name="title"></slot>
                 </el-col>
                 <el-col :span="4">
-                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="deleteItem(item.key)"></el-button>
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="deleteItem(item.key)" :disabled="searchMode||editingItemKey"></el-button>
                 </el-col>
             </el-row>
         </div>
@@ -23,7 +23,7 @@ import { constants } from 'http2';
 var levelDb = LevelDb.getInstance()
 export default {
     name:"infocard",
-    props:['item'],
+    props:['item','searchMode','editingItemKey'],
     components:{addcard},
     data:function(){
         return {
