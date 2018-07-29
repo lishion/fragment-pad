@@ -17,11 +17,17 @@ function createWindow () {
   /**
    * Initial window options
    */
+  var ratio = 16.0/9
+  var height = 600
+  var width = height * ratio
   mainWindow = new BrowserWindow({
     height: 600,
     useContentSize: true,
-    width: 900,
-    frame: false
+    width: width,
+    minWidth:width,
+    minHeight:height,
+    frame: false,
+    resizable:false
   })
   mainWindow.webContents.closeDevTools() //取消自动显示工具栏
   mainWindow.setMenu(null) //取消菜单栏
@@ -30,6 +36,7 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+   
 }
 
 app.on('ready', createWindow)
@@ -39,6 +46,8 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
+
 
 app.on('activate', () => {
   if (mainWindow === null) {
