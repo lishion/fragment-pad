@@ -9,6 +9,7 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
+var path = require('path')
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080/#/index`
   : `file://${__dirname}/index.html`
@@ -27,7 +28,9 @@ function createWindow () {
     minWidth:width,
     minHeight:height,
     frame: false,
-    resizable:false
+    resizable:false,
+    icon:path.join(__dirname, '../renderer/assets/icons/32X32.png')
+    
   })
   mainWindow.webContents.closeDevTools() //取消自动显示工具栏
   mainWindow.setMenu(null) //取消菜单栏
