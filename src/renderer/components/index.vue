@@ -20,7 +20,7 @@
                 </el-col>
                 <el-col :span="4" :push="3">  
                     <div class="grid-content" >
-                        <el-button slot="reference" icon="el-icon-plus" type="text"  @click="addEmptyCard" :disabled="searchMode"></el-button>
+                        <el-button slot="reference" icon="el-icon-plus" type="text"  @click="addEmptyCard" :disabled="searchMode||editingItemKey!=null"></el-button>
                     </div>
                 </el-col>
             </el-row>
