@@ -13,7 +13,7 @@
                             v-model="keywords"
                             placeholder="输入以搜索"
                             :prefix-icon="icon" 
-                            :disabled="editingItemKey"
+                            :disabled="editingItemKey!=null"
                         >
                         </el-input>
                     </div>
@@ -26,7 +26,7 @@
             </el-row>
         </el-header>
         
-        <el-main style="margin-top: 60px">
+        <el-main style="margin-top: 60px" >
                 
                 <div  
                     v-for="item in items"  
@@ -50,6 +50,7 @@
                         :searchMode="searchMode"
                         :editingItemKey="editingItemKey"
                         v-else
+                        id="main"
                     >   
                         <template slot="title">
                             <div v-html="item.value.rendered_title" v-if="item.value.rendered_title"></div>
@@ -66,7 +67,7 @@
     </el-container>
 </template>
 
-<style scoped>
+<style scope>
     #header{
         width: 100%;
         height: 60px;
@@ -74,6 +75,11 @@
         left: 0;
         top: 50px;     
     }
+    #main {
+        background-color: rgba(255, 255, 255, 0.5);
+        border: 0px
+    }
+  
 </style>
 
 <script>

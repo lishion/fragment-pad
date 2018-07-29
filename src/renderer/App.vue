@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :style="{backgroundImage: 'url(' + bg_url + ')',height:clientHeight,backgroundAttachment:attachment}">
+  <div id="app" :style="{backgroundImage: 'url(' + bg_url + ')',height:clientHeight,backgroundAttachment:attachment,backgroundRepeat:repeat,backgroundSize:size}">
    
     <!-- 使得去掉窗口以后可以拖动 -->
     <div style="height:50px;-webkit-app-region: drag" ></div>
@@ -9,14 +9,16 @@
 </template>
 
 <script>
-  import bg from './assets/bg.jpg'
+  import bg from './assets/bg.jpeg'
   export default {
     name: 'fragment-pad',
     data:function(){
       return {
         bg_url:bg,
         clientHeight:"600px",
-        attachment:"fixed"
+        attachment:"fixed",
+        repeat:"no-repeat",
+        size:"cover"
         }
     },
     mounted() {
