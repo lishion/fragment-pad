@@ -50,7 +50,7 @@
                         :searchMode="searchMode"
                         :editingItemKey="editingItemKey"
                         v-else
-                        id="main"
+                        :style="{backgroundColor: 'rgba(255, 255, 255,' + alpha + ')'}"
                     >   
                         <template slot="title">
                             <div v-html="item.value.rendered_title" v-if="item.value.rendered_title"></div>
@@ -79,6 +79,7 @@
         background-color: rgba(255, 255, 255, 0.5);
         border: 0px
     }
+    .el-card{border: 0px}
   
 </style>
 
@@ -87,10 +88,10 @@
 import infocard from "./info-card";
 import addcard from "./add-card";
 import infiniteScroll from "vue-infinite-scroll";
-import {LevelDb,MessageBox} from '../assets/js/utils'
-
+import {LevelDb,MessageBox,UserSetting} from '../assets/js/utils'
+import Bus from '../assets/js/bus'
 let leveldb = LevelDb.getInstance();
-
+let setting = UserSetting.getInstance()
 export default {
   name: "index",
   components: { infocard, addcard },
@@ -107,7 +108,8 @@ export default {
       editingItemKey : null,
       searchMode :false,
       canInput : true,
-      canDelete : true
+      canDelete : true,
+      alpha : setting.getAlphaOr(50)/100
     };
   },
   methods: {
@@ -204,6 +206,13 @@ export default {
         })
         this.reload()
     }
+  },
+  mounted() {
+　　　　let self = this
+       Bus.$on('on-tp-change', (alpha) => {
+            self.alpha = alpha/100.0
+            setting.setAlpha(alpha)
+       })
   }
 };
 </script>

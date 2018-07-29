@@ -92,6 +92,37 @@ class MessageBox{
         isSuccess ? this.failed("失败了orz") : this.success("成功啦^^")
     }
 }
-export { LevelDb,MessageBox}
+
+class UserSetting{
+    constructor(store){
+        this.store = store
+    }
+    getOr(key,value){
+        var storedValue = this.store.get(key)
+        return storedValue?storedValue:value
+    }
+    getAlphaOr(value){
+        return parseFloat(this.getOr("alpha",value))
+    }
+    setAlpha(value){
+        this.store.set("alpha",value)
+    }
+    getBackgroundImageOr(value){
+        return this.getOr("bgImage",value)
+    }
+    setBackgroundImage(value){
+        this.store.set("bgImage",value)
+    }
+    static getInstance(){
+        if(UserSetting.instance===null){
+            const Store = require('electron-store')
+            const store = new Store();
+            UserSetting.instance = new UserSetting(store)
+        }
+        return UserSetting.instance
+    }
+}   
+UserSetting.instance = null
+export { LevelDb,MessageBox,UserSetting}
 
 

@@ -17,9 +17,9 @@ function createWindow () {
   /**
    * Initial window options
    */
-  var ratio = 16.0/9
+  var ratio = 1920/1080.0
   var height = 600
-  var width = height * ratio
+  var width = parseInt(height * ratio)
   mainWindow = new BrowserWindow({
     height: 600,
     useContentSize: true,
@@ -32,7 +32,7 @@ function createWindow () {
   mainWindow.webContents.closeDevTools() //取消自动显示工具栏
   mainWindow.setMenu(null) //取消菜单栏
   mainWindow.loadURL(winURL)
-
+  console.info(app.getPath("userData"))
   mainWindow.on('closed', () => {
     mainWindow = null
   })
