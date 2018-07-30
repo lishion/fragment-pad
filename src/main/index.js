@@ -10,6 +10,7 @@ if (process.env.NODE_ENV !== 'development') {
 
 let mainWindow
 var path = require('path')
+var ipcMain = require('electron').ipcMain
 
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080/#/index`
@@ -43,7 +44,16 @@ function createWindow () {
    
 }
 
-app.on('ready', createWindow)
+app.on('ready', ()=>{
+  createWindow()
+  var globalShortcut = require('electron').globalShortcut
+  globalShortcut.register('Esc', () => {
+     if(mainWindow.isFocused()){
+      let contents = mainWindow.webContents
+      contents.send('cancel')
+     }
+  })
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -70,7 +80,7 @@ if (isSecondInstance) {
   app.quit()
 }
 
-var ipcMain = require('electron').ipcMain
+
 ipcMain.on('minimize',()=>{
   mainWindow.minimize()
 })

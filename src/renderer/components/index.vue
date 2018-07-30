@@ -7,7 +7,6 @@
                     <div 
                         class="grid-content" 
                         @keydown.enter="search(keywords)" 
-                        @keydown.esc="cancel(null)" 
                     >
                         <el-input
                             v-model="keywords"
@@ -31,7 +30,6 @@
                 <div  
                     v-for="item in items"  
                     :key="item.key" 
-                    @keydown.esc="cancel(item)"
                 >
                     <!--如果是编辑模式，则现实编辑界面-->
                     <addcard 
@@ -92,6 +90,10 @@ import {LevelDb,MessageBox,UserSetting} from '../assets/js/utils'
 import Bus from '../assets/js/bus'
 let leveldb = LevelDb.getInstance();
 let setting = UserSetting.getInstance()
+let ipcRender = require('electron').ipcRenderer
+ipcRender.on('cancel',()=>{
+     
+})
 export default {
   name: "index",
   components: { infocard, addcard },
@@ -212,6 +214,9 @@ export default {
        Bus.$on('on-tp-change', (alpha) => {
             self.alpha = alpha/100.0
             setting.setAlpha(alpha)
+       })
+       ipcRender.on('cancel',()=>{
+           self.cancel(self.editingItemKey)
        })
   }
 };
