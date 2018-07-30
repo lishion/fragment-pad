@@ -10,3 +10,4 @@ thumbs.db
 !.gitkeep
 /mydb
 src/renderer/assets/js/test.js
+src/renderer/assets/js/mydb
