@@ -10,6 +10,7 @@ if (process.env.NODE_ENV !== 'development') {
 
 let mainWindow
 var path = require('path')
+
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080/#/index`
   : `file://${__dirname}/index.html`
@@ -68,3 +69,8 @@ const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) 
 if (isSecondInstance) {
   app.quit()
 }
+
+var ipcMain = require('electron').ipcMain
+ipcMain.on('minimize',()=>{
+  mainWindow.minimize()
+})

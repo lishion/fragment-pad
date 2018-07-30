@@ -2,15 +2,16 @@
   <div id="app" :style="{backgroundImage: 'url(' + bg_url + ')',height:clientHeight,backgroundAttachment:attachment,backgroundSize:size,backgroundPosition:position}">
     <div>
         <el-row>
-          <el-col :span="20"><div style="height:50px;-webkit-app-region: drag"></div></el-col>
-          <el-col :span="4">
+          <el-col :span="22"><div style="height:50px;-webkit-app-region: drag"></div></el-col>
+          <el-col :span="2">
             <el-popover
                 placement="bottom"
                 trigger="click">
                 <setting @on-bg-change="changeBackground"></setting>
                 <el-button slot="reference" type="text" icon="el-icon-setting"></el-button>
-                <!-- <el-button slot="reference">click 激活</el-button> -->
             </el-popover>
+            <!--最小化按钮-->
+            <el-button type="text" icon="el-icon-minus" style="margin-left:1em" @click="minimize"></el-button>
           </el-col>
        </el-row>
     </div>
@@ -55,6 +56,10 @@
       changeBackground(bg){
         this.bg_url = require(`./assets/bg/${bg}`)
         userSetting.setBackgroundImage(bg)
+      },
+      minimize(){
+        var ipc =  require('electron').ipcRenderer
+        ipc.send('minimize')
       }
     }
 
