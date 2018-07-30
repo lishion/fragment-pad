@@ -38,8 +38,7 @@ class LevelDb{
             var leveldown = require('leveldown')
             var encode = require('encoding-down')
             var path = require('path')
-            var dbPath
-            dbPath = path.join(__dirname,'../../../../mydb')
+            var dbPath = path.join(__dirname,'../../../../mydb')
             var db = levelup(encode(leveldown(dbPath),{ valueEncoding: 'json' }))
             LevelDb.instance = new LevelDb(db)
         }
