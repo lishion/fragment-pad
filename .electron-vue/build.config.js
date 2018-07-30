@@ -9,7 +9,7 @@ module.exports = {
   asar: false,
   dir: path.join(__dirname, '../'),
   icon: path.join(__dirname, '../src/renderer/assets/icons/32X32.png'),
-  ignore: /(^\/(src|test|\.[a-z]+|README|yarn|leveldown|static|dist\/web))|\.gitkeep/,
+  ignore: /(^\/(src|test|\.[a-z]+|README|yarn|leveldown|mydb|static|dist\/web))|\.gitkeep/,
   out: path.join(__dirname, '../build'),
   overwrite: true,
   platform: process.env.BUILD_TARGET || 'all'
