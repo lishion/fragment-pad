@@ -130,8 +130,7 @@ export default {
     },
     getEmptyItem(){
         return {
-            "isNew":true,
-            "key":this.uuid.v1(),
+            "key":"new-one",
             "value":{
                 "title":"",
                 "content":"",
@@ -155,7 +154,6 @@ export default {
         this.editingItemKey = null
     },
     addEmptyCard(){
-        console.info(this.editingItemKey)
         if(this.editingItemKey == null){
             var item = this.getEmptyItem()
             this.items.unshift(item)
@@ -164,9 +162,9 @@ export default {
     },
     save(item) {
         delete item.value.rendered_title
-        delete item.isNew
-        console.info(item)
-
+        if(item.key === "new-one"){ // 如果key为new-one 则表示这是一条需要新增的数据，需要删除key
+            delete item.key
+        }
         leveldb.put(item,(err)=>{
             this.messageBox.showMessage(err)
             if(!err){
@@ -174,12 +172,11 @@ export default {
                 this.reload()
             }
         }) 
-        console.info(this.editingItemKey)
     },
 
     cancel(item = null){
         if(item !== null){ //取消编辑操作
-            if(this.items[0].isNew === true){
+            if(this.items[0].key === "new-one"){
                 this.items.shift()
             } 
             this.exitEditMode()
