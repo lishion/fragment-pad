@@ -21,8 +21,8 @@
 </template>
 
 <style >
-    #add-card .el-input__inner{border: 0px ;border-bottom:1px solid #ebeef5;border-radius:0 }
-    #add-card .el-textarea__inner{border: 0px;border-bottom:1px solid #ebeef5;border-radius:0}
+    #add-card .el-input__inner{border: 0px ;border-bottom:1px solid rgb(200, 200, 159);border-radius:0 }
+    #add-card .el-textarea__inner{border: 0px;border-bottom:1px solid rgb(200, 200, 159);border-radius:0}
 </style>
 
 <script>
