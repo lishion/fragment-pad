@@ -24,9 +24,26 @@
 <script>
 
 import {LevelDb,MessageBox} from '../assets/js/utils'
-
+import 'highlight.js/styles/default.css'
 var db = LevelDb.getInstance()
-var marked = require('marked')
+var myMarked = require('marked');
+var highlight = require('highlight.js')
+// 支持代码高亮
+myMarked.setOptions({
+  renderer: new myMarked.Renderer(),
+  highlight: function(code) {
+    return highlight.highlightAuto(code).value;
+  },
+  pedantic: false,
+  gfm: true,
+  tables: true,
+  breaks: false,
+  sanitize: false,
+  smartLists: true,
+  smartypants: false,
+  xhtml: false
+});
+
 export default {
     name:"addinfo",
     props:['item'],
@@ -36,7 +53,7 @@ export default {
             if(title.match(/^\s+?$/)||title===""){
                 this.item.value.title = "我是不是忘了写标题??"
             }
-            this.item.value.marked_content = marked(this.item.value.content)
+            this.item.value.marked_content = myMarked(this.item.value.content)
             this.$emit('on-save',this.item)
         }
     }
