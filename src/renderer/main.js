@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import 'highlight.js/styles/default.css'
 import index from './components/index'
 
 

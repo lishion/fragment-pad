@@ -18,8 +18,20 @@
 
 
 <script>
+let ipcRender = require('electron').ipcRenderer
 export default {
     name:"infocard",
-    props:['itemKey','searchMode','editingItemKey']
+    props:['itemKey','searchMode','editingItemKey'],
+
+    mounted(){
+       var doms =  document.getElementsByClassName('content-url')
+       for(var i=0;i<doms.length;i++){
+           var dom = doms[i]
+           doms[i].onclick=()=>{
+               var target = dom.getAttribute("my-target")
+               ipcRender.send('click-content-url',target) // 主动发送点击事件到主线程，使其打开浏览器
+           }
+       }
+    } 
 }
 </script>

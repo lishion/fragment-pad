@@ -24,25 +24,8 @@
 <script>
 
 import {LevelDb,MessageBox} from '../assets/js/utils'
-import 'highlight.js/styles/default.css'
-var db = LevelDb.getInstance()
-var myMarked = require('marked');
-var highlight = require('highlight.js')
-// 支持代码高亮
-myMarked.setOptions({
-  renderer: new myMarked.Renderer(),
-  highlight: function(code) {
-    return highlight.highlightAuto(code).value;
-  },
-  pedantic: false,
-  gfm: true,
-  tables: true,
-  breaks: false,
-  sanitize: false,
-  smartLists: true,
-  smartypants: false,
-  xhtml: false
-});
+
+import myMarked from '../assets/js/markedAdapter.js' 
 
 export default {
     name:"addinfo",
