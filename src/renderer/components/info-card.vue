@@ -16,6 +16,21 @@
     </el-card>
 </template>
 
+<style>
+    <!--引用blockquote样式-->
+    blockquote {
+          margin-top: 1em;
+          margin-bottom: 1em;
+          margin-left: 2em;
+          padding-left: 1em;
+          padding-top: 1em;
+          padding-right: 1em;
+          padding-bottom: 1em;
+          border-left: 3px solid #ccc;
+     }
+</style>
+
+
 
 <script>
 let ipcRender = require('electron').ipcRenderer
