@@ -25,8 +25,17 @@
           padding-top: 1em;
           padding-right: 1em;
           padding-bottom: 1em;
-          border-left: 3px solid #ccc;
-     }
+       
+          border-left: 2px dashed whitesmoke;
+    }
+    .line {
+        height: 1px;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        margin-left: 0;
+        margin-right: 0;
+        background:whitesmoke;
+    }
 </style>
 
 
