@@ -17,7 +17,6 @@
 </template>
 
 <style>
-    <!--引用blockquote样式-->
     blockquote {
           margin-top: 1em;
           margin-bottom: 1em;
