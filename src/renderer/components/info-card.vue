@@ -50,7 +50,7 @@ export default {
        var doms =  document.getElementsByClassName('content-url')
        for(var i=0;i<doms.length;i++){
            var dom = doms[i]
-           doms[i].onclick=()=>{
+           doms[i].onmousedown=(value)=>{
                var target = dom.getAttribute("my-target")
                ipcRender.send('click-content-url',target) // 主动发送点击事件到主线程，使其打开浏览器
            }

@@ -41,6 +41,15 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  mainWindow.webContents.on('new-window', (event, url) => {
+    event.preventDefault()
+    // const win = new BrowserWindow({show: false})
+    // win.once('ready-to-show', () => win.show())
+    // win.loadURL(url)
+    // event.newGuest = win
+
+  })
    
 }
 
