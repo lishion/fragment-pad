@@ -1,5 +1,5 @@
 <template>
-    <el-card class="box-card" style="margin-bottom: 18px" shadow="hover" header-style="background-color:#409EFF">
+    <el-card class="box-card" style="margin-bottom: 18px;border:0px" shadow="hover" header-style="background-color:#409EFF" >
         <div slot="header">
             <el-row :gutter="20" type="flex" justify="space-between">
                 <el-col :span="16">
@@ -16,10 +16,45 @@
     </el-card>
 </template>
 
+<style>
+    blockquote {
+          margin-top: 1em;
+          margin-bottom: 1em;
+          margin-left: 2em;
+          padding-left: 1em;
+          padding-top: 1em;
+          padding-right: 1em;
+          padding-bottom: 1em;
+       
+          border-left: 2px dashed whitesmoke;
+    }
+    .line {
+        height: 1px;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        margin-left: 0;
+        margin-right: 0;
+        background:whitesmoke;
+    }
+</style>
+
+
 
 <script>
+let ipcRender = require('electron').ipcRenderer
 export default {
     name:"infocard",
-    props:['itemKey','searchMode','editingItemKey']
+    props:['itemKey','searchMode','editingItemKey'],
+
+    mounted(){
+       var doms =  document.getElementsByClassName('content-url')
+       for(var i=0;i<doms.length;i++){
+           var dom = doms[i]
+           doms[i].onmousedown=(value)=>{
+               var target = dom.getAttribute("my-target")
+               ipcRender.send('click-content-url',target) // 主动发送点击事件到主线程，使其打开浏览器
+           }
+       }
+    } 
 }
 </script>

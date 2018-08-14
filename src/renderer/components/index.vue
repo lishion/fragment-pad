@@ -36,19 +36,21 @@
                         v-if="edit_able[item.key]" 
                         :item=item
                         @on-save="save"
+                        id="addcard"
                     >
                     </addcard>
                     
                     <!--否则显示普通界面-->
                     <!--searchMode||editingItemKey 用于控制删除按钮是否可用-->
                     <infocard   
+                        v-else
+                        id="infocard"
                         @on-delete="onDeleteSuccess" 
                         @on-modify="modify(item)"
                         :itemKey="item.key"
                         :searchMode="searchMode"
                         :editingItemKey="editingItemKey"
-                        v-else
-                        :style="{backgroundColor: 'rgba(255, 255, 255,' + alpha + ')'}"
+                        :style="{backgroundColor: 'rgba(255, 255, 255,' + alpha + ')'}"   
                     >   
                         <template slot="title">
                             <div v-html="item.value.rendered_title" v-if="item.value.rendered_title"></div>
@@ -65,7 +67,7 @@
     </el-container>
 </template>
 
-<style scope>
+<style >
     #header{
         width: 100%;
         height: 60px;
@@ -73,12 +75,10 @@
         left: 0;
         top: 50px;     
     }
-    #main {
-        background-color: rgba(255, 255, 255, 0.5);
-        border: 0px
-    }
-    .el-card{border: 0px}
-  
+    
+    #addcard  .el-input__inner{border: 0px ;border-bottom:1px solid rgb(200, 200, 159);border-radius:0 }
+    #addcard  .el-textarea__inner{border: 0px;border-bottom:1px solid rgb(200, 200, 159);border-radius:0}
+
 </style>
 
 <script>
@@ -91,9 +91,7 @@ import Bus from '../assets/js/bus'
 let leveldb = LevelDb.getInstance();
 let setting = UserSetting.getInstance()
 let ipcRender = require('electron').ipcRenderer
-ipcRender.on('cancel',()=>{
-     
-})
+
 export default {
   name: "index",
   components: { infocard, addcard },

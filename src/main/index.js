@@ -41,6 +41,15 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  mainWindow.webContents.on('new-window', (event, url) => {
+    event.preventDefault()
+    // const win = new BrowserWindow({show: false})
+    // win.once('ready-to-show', () => win.show())
+    // win.loadURL(url)
+    // event.newGuest = win
+
+  })
    
 }
 
@@ -80,7 +89,16 @@ if (isSecondInstance) {
   app.quit()
 }
 
-
+//接收到最小化事件
 ipcMain.on('minimize',()=>{
   mainWindow.minimize()
+})
+
+const {shell} = require('electron')
+
+//当用户点击了内容的中的连接，需要主动调用浏览器，否则会自动打开一个electron窗口
+//事件来自于 `info-card.vue`
+ipcMain.on('click-content-url',(event,target)=>{
+  console.info(target.startsWith("http://") ? target : `http://${target}`)
+  shell.openExternal(target.startsWith("http://")||target.startsWith("https://") ? target : `http://${target}`)
 })

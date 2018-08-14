@@ -1,6 +1,6 @@
 <template>
    
-    <div  @keydown.ctrl.83="save" id="add-card">
+    <div  @keydown.ctrl.83="save">
         <el-card class="box-card" style="margin-bottom: 18px" shadow="hover" header-style="background-color:#409EFF">
             
             <div slot="header">
@@ -13,24 +13,20 @@
                     type="textarea"
                     :autosize="{ minRows: 5}"
                     placeholder="请输入内容"
-                    @keydown.ctrl.83="save"
                 ></el-input>
             </div>
         </el-card>
     </div>
 </template>
 
-<style >
-    #add-card .el-input__inner{border: 0px ;border-bottom:1px solid rgb(200, 200, 159);border-radius:0 }
-    #add-card .el-textarea__inner{border: 0px;border-bottom:1px solid rgb(200, 200, 159);border-radius:0}
-</style>
+
 
 <script>
 
 import {LevelDb,MessageBox} from '../assets/js/utils'
 
-var db = LevelDb.getInstance()
-var marked = require('marked')
+import myMarked from '../assets/js/markedAdapter.js' 
+
 export default {
     name:"addinfo",
     props:['item'],
@@ -40,7 +36,7 @@ export default {
             if(title.match(/^\s+?$/)||title===""){
                 this.item.value.title = "我是不是忘了写标题??"
             }
-            this.item.value.marked_content = marked(this.item.value.content)
+            this.item.value.marked_content = myMarked(this.item.value.content)
             this.$emit('on-save',this.item)
         }
     }
