@@ -11,10 +11,16 @@ if (process.env.NODE_ENV !== 'development') {
 let mainWindow
 var path = require('path')
 var ipcMain = require('electron').ipcMain
+const dialog = require('electron').dialog
+var fs = require('fs');
 
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080/#/index`
   : `file://${__dirname}/index.html`
+
+function copyFile(src, dist) {
+  fs.createReadStream(src).pipe(fs.createWriteStream(dist));
+}
 
 function createWindow () {
   /**
@@ -99,4 +105,15 @@ const {shell} = require('electron')
 //事件来自于 `info-card.vue`
 ipcMain.on('click-content-url',(event,target)=>{
   shell.openExternal(target.startsWith("http://")||target.startsWith("https://") ? target : `http://${target}`)
+})
+
+ipcMain.on('open-file-dialog', function (event) {
+  dialog.showOpenDialog({
+    properties: ['openFile']
+  }, function (files) {
+    let file = files[0]
+    let ext = path.extname(file)
+    copyFile(files[0],path.join(__dirname, `../renderer/assets/bg/__user__${ext}`))
+    if (files) event.sender.send('selected-directory', `../renderer/assets/bg/__user__${ext}`)
+  })
 })

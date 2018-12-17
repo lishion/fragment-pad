@@ -186,7 +186,7 @@ export default {
         }
     },
     modify(item){
-        if(this.editingItemKey == null && this.searchMode == false){
+        if(this.editingItemKey == null){
             this.editMode(item.key)
         }
     },
