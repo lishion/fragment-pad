@@ -19,10 +19,18 @@
   </div>
 </template>
 
+<style>
+  .hljs{
+    background: none
+  }
+</style>
+
+
 <script>
   import setting from './components/setting'
   import {UserSetting} from './assets/js/utils'
   let userSetting = UserSetting.getInstance()
+  import Bus from './assets/js/bus'
   export default {
     name: 'fragment-pad',
     components:{setting},
@@ -49,8 +57,14 @@
       window.onscroll = function scroll(){
         let rollHeigth = window.scrollY
         that.clientHeight = `${document.documentElement.clientHeight + window.scrollY}px`
-          
       };  
+      //进入/退出搜索时，滚动条设置为0，避免继承上个页面的滚动条
+      Bus.$on("on-search",()=>{ 
+        that.clientHeight = "600px"
+      })
+      Bus.$on("cancel-search",()=>{
+        that.clientHeight = "600px"
+      })
     },
     methods:{
       changeBackground(bg){
