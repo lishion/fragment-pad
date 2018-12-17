@@ -19,6 +19,13 @@
   </div>
 </template>
 
+<style>
+  .hljs{
+    background: none
+  }
+</style>
+
+
 <script>
   import setting from './components/setting'
   import {UserSetting} from './assets/js/utils'
@@ -49,7 +56,6 @@
       };
       window.onscroll = function scroll(){
         let rollHeigth = window.scrollY
-        console.info(window.scrollY,that.clientHeight)
         that.clientHeight = `${document.documentElement.clientHeight + window.scrollY}px`
       };  
       //进入/退出搜索时，滚动条设置为0，避免继承上个页面的滚动条
