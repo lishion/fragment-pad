@@ -186,7 +186,7 @@ export default {
         }
     },
     modify(item){
-        if(this.editingItemKey == null && this.searchMode == false){
+        if(this.editingItemKey == null){
             this.editMode(item.key)
         }
     },
@@ -197,10 +197,7 @@ export default {
             this.items.push(data)
         })
         this.icon = "el-icon-search"
-        Bus.$emit("on-search")
-        // let eles = document.getElementById("main").scrollIntoView()
-        // console.info(eles[0].scrollTop,eles[0].scrollHeight)
-        
+        Bus.$emit("on-search") 
     },
     onDeleteSuccess(key){
         leveldb.deleteById(key,(err)=>{

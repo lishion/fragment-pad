@@ -65,6 +65,10 @@
       Bus.$on("cancel-search",()=>{
         that.clientHeight = "600px"
       })
+      Bus.$on("on-bg-set",(bg)=>{
+        this.bg_url = require(`./assets/bg/${bg}`)
+        userSetting.setBackgroundImage(bg)
+      })
     },
     methods:{
       changeBackground(bg){
