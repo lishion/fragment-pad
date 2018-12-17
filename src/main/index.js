@@ -37,7 +37,6 @@ function createWindow () {
   mainWindow.webContents.closeDevTools() //取消自动显示工具栏
   mainWindow.setMenu(null) //取消菜单栏
   mainWindow.loadURL(winURL)
-  console.info(app.getPath("userData"))
   mainWindow.on('closed', () => {
     mainWindow = null
   })
@@ -99,6 +98,5 @@ const {shell} = require('electron')
 //当用户点击了内容的中的连接，需要主动调用浏览器，否则会自动打开一个electron窗口
 //事件来自于 `info-card.vue`
 ipcMain.on('click-content-url',(event,target)=>{
-  console.info(target.startsWith("http://") ? target : `http://${target}`)
   shell.openExternal(target.startsWith("http://")||target.startsWith("https://") ? target : `http://${target}`)
 })
