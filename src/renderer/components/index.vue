@@ -25,13 +25,14 @@
             </el-row>
         </el-header>
         
-        <el-main style="margin-top: 60px" >
+        <el-main style="margin-top: 60px" id="main">
                 
                 <div  
                     v-for="item in items"  
                     :key="item.key" 
+                    class="card"
                 >
-                    <!--如果是编辑模式，则现实编辑界面-->
+                    <!--如果是编辑模式，则显示编辑界面-->
                     <addcard 
                         v-if="edit_able[item.key]" 
                         :item=item
@@ -143,7 +144,6 @@ export default {
       this.loadData()
     },
     editMode(key){
-        
         this.editingItemKey = key
         this.$set(this.edit_able,this.editingItemKey,true)
     },
@@ -178,9 +178,10 @@ export default {
                 this.items.shift()
             } 
             this.exitEditMode()
-        }else{
+        }else if (this.searchMode){ // 退出搜索模式
             this.searchMode = false
             this.reload()
+            Bus.$emit("cancel-search")
             this.icon = "el-icon-view"
         }
     },
@@ -196,6 +197,10 @@ export default {
             this.items.push(data)
         })
         this.icon = "el-icon-search"
+        Bus.$emit("on-search")
+        // let eles = document.getElementById("main").scrollIntoView()
+        // console.info(eles[0].scrollTop,eles[0].scrollHeight)
+        
     },
     onDeleteSuccess(key){
         leveldb.deleteById(key,(err)=>{
