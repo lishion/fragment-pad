@@ -45,7 +45,7 @@ function createWindow () {
     resizable:false,
     icon:path.join(__dirname, '../renderer/assets/icons/32X32.png')
   })
-  mainWindow.webContents.openDevTools() //取消自动显示工具栏
+  mainWindow.webContents.closeDevTools() //取消自动显示工具栏
   mainWindow.setMenu(null) //取消菜单栏
   mainWindow.loadURL(winURL)
   mainWindow.on('closed', () => {
