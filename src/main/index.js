@@ -1,4 +1,5 @@
 import { app, BrowserWindow } from 'electron'
+import { APOLLO_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 /**
  * Set `__static` path to static files in production
@@ -12,14 +13,19 @@ let mainWindow
 var path = require('path')
 var ipcMain = require('electron').ipcMain
 const dialog = require('electron').dialog
-var fs = require('fs');
+let fs = require('fs');
 
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080/#/index`
   : `file://${__dirname}/index.html`
 
-function copyFile(src, dist) {
-  fs.createReadStream(src).pipe(fs.createWriteStream(dist));
+function copyFile(src, dst,callback) {
+  if(fs.existsSync(dst)){
+    fs.unlink(dst,(err)=>{
+      fs.writeFileSync(dst,fs.readFileSync(src))
+      callback()
+    })
+  }
 }
 
 function createWindow () {
@@ -38,7 +44,6 @@ function createWindow () {
     frame: false,
     resizable:false,
     icon:path.join(__dirname, '../renderer/assets/icons/32X32.png')
-    
   })
   mainWindow.webContents.closeDevTools() //取消自动显示工具栏
   mainWindow.setMenu(null) //取消菜单栏
@@ -53,7 +58,6 @@ function createWindow () {
     // win.once('ready-to-show', () => win.show())
     // win.loadURL(url)
     // event.newGuest = win
-
   })
    
 }
@@ -111,9 +115,20 @@ ipcMain.on('open-file-dialog', function (event) {
   dialog.showOpenDialog({
     properties: ['openFile']
   }, function (files) {
+    if(!files){
+      return
+    }
     let file = files[0]
     let ext = path.extname(file)
-    copyFile(files[0],path.join(__dirname, `../renderer/assets/bg/__user__${ext}`))
-    if (files) event.sender.send('selected-directory', `../renderer/assets/bg/__user__${ext}`)
+    let filePath = process.env.NODE_ENV === "development" ? `../renderer/assets/bg/__user__${ext}` : `imgs/__user__--bg${ext}`
+    copyFile(files[0],path.join(__dirname, filePath),()=>{
+      event.sender.send('selected-directory', ext)
+    })
+    
   })
+})
+
+ipcMain.on('on-bg-set',()=>{
+  app.relaunch()
+  app.exit(0)
 })
