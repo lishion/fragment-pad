@@ -64,13 +64,17 @@ function createWindow () {
 
 app.on('ready', ()=>{
   createWindow()
-  var globalShortcut = require('electron').globalShortcut
-  globalShortcut.register('Esc', () => {
-     if(mainWindow.isFocused()){
-      let contents = mainWindow.webContents
-      contents.send('cancel')
-     }
-  })
+  try{
+    var globalShortcut = require('electron').globalShortcut
+    globalShortcut.register('Esc', () => {
+       if(mainWindow.isFocused()){
+        let contents = mainWindow.webContents
+        contents.send('cancel')
+       }
+    })
+  }catch(e){
+    
+  }
 })
 
 app.on('window-all-closed', () => {
