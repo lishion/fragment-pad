@@ -159,6 +159,12 @@ class UserSetting{
     setBackgroundImage(value){
         this.store.set("bgImage",value)
     }
+    setUserBackGroundImage(value){
+        this.store.set("userBg",value)
+    }
+    getUserBackGroundImage(){
+        return this.getOr("userBg","__user__.jpg")
+    }
     static getInstance(){
         if(UserSetting.instance===null){
             const Store = require('electron-store')
