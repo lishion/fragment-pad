@@ -27,9 +27,11 @@
 
 
 <script>
-import { LevelDb, MessageBox } from "../assets/js/utils";
+import { LevelDb, MessageBox,setLinkRule } from "../assets/js/utils";
 import { mavonEditor } from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
+let mdInstance = mavonEditor.getMarkdownIt()
+setLinkRule(mdInstance)
 export default {
   name: "addinfo",
   props: ["item"],
