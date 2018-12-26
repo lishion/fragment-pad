@@ -35,6 +35,8 @@ function createWindow () {
   var ratio = 1920/1080.0
   var height = 600
   var width = parseInt(height * ratio)
+  require('../renderer/assets/icons/icon.png');
+  let iconPath = process.env.NODE_ENV === 'development' ? "../renderer/assets/icons/icon.png" : "imgs/icon--icons.png" 
   mainWindow = new BrowserWindow({
     height: 600,
     useContentSize: true,
@@ -43,7 +45,7 @@ function createWindow () {
     minHeight:height,
     frame: false,
     resizable:false,
-    icon:path.join(__dirname, '../renderer/assets/icons/32X32.png')
+    icon:path.join(__dirname,iconPath)
   })
   mainWindow.webContents.closeDevTools() //取消自动显示工具栏
   mainWindow.setMenu(null) //取消菜单栏

@@ -8,7 +8,7 @@ module.exports = {
   arch: 'x64',
   asar: false,
   dir: path.join(__dirname, '../'),
-  icon: path.join(__dirname, '../src/renderer/assets/icons/32X32.png'),
+  icon: path.join(__dirname, '../src/renderer/assets/icons/icon'),
   ignore: /(^\/(src|test|\.[a-z]+|README|yarn|leveldown|mydb|static|dist\/web))|\.gitkeep/,
   out: path.join(__dirname, '../build'),
   overwrite: true,
