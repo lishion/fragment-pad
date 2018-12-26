@@ -23,6 +23,16 @@ let mainConfig = {
         exclude: /node_modules/
       },
       {
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        use: {
+          loader: 'url-loader',
+          query: {
+            limit: 10000,
+            name: 'imgs/[name]--[folder].[ext]'
+          }
+        }
+      },
+      {
         test: /\.node$/,
         use: 'node-loader'
       }
