@@ -109,13 +109,17 @@ ipcMain.on('minimize',()=>{
   mainWindow.minimize()
 })
 
-const {shell} = require('electron')
+try{
+  const {shell} = require('electron')
+  //当用户点击了内容的中的连接，需要主动调用浏览器，否则会自动打开一个electron窗口
+  //事件来自于 `info-card.vue`
+  ipcMain.on('click-content-url',(event,target)=>{
+    shell.openExternal(target.startsWith("http://")||target.startsWith("https://") ? target : `http://${target}`)
+  })
+}catch(e){
+  app.quit()
+}
 
-//当用户点击了内容的中的连接，需要主动调用浏览器，否则会自动打开一个electron窗口
-//事件来自于 `info-card.vue`
-ipcMain.on('click-content-url',(event,target)=>{
-  shell.openExternal(target.startsWith("http://")||target.startsWith("https://") ? target : `http://${target}`)
-})
 
 ipcMain.on('open-file-dialog', function (event) {
   dialog.showOpenDialog({
