@@ -8,7 +8,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import 'highlight.js/styles/default.css'
 import index from './components/index'
-
+import "./assets/font/index.css"
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios

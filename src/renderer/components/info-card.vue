@@ -36,6 +36,9 @@
         margin-right: 0;
         background:whitesmoke;
     }
+    .box-card{
+        font-family:  Monospace Pro Bold,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    }
 </style>
 
 
