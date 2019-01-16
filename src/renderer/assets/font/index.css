@@ -1,5 +1,7 @@
 @font-face
 {
-    font-family: Monospace Pro Bold;
-    src: url("./EtelkaMonospaceProBold.otf")
+    font-family: "Consola";
+    src: url("./consola.ttf");
+    font-weight: normal;
+    font-style: normal;
 }
