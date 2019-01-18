@@ -133,10 +133,11 @@ ipcMain.on('open-file-dialog', function (event) {
       return
     }
     let file = files[0]
-    let ext = path.extname(file)
-    let filePath = process.env.NODE_ENV === "development" ? `../renderer/assets/bg/user${ext}` : `imgs/user--bg${ext}`
-    copyFile(files[0],path.join(__dirname, filePath),(err)=>{
-      event.sender.send('selected-directory', ext)
+    let sourceExt = path.extname(file)
+    let targetExt = sourceExt.replace(".jpeg",".jpg")
+    let filePath = process.env.NODE_ENV === "development" ? `../renderer/assets/bg/user${sourceExt}` : `imgs/user--bg${targetExt}`
+    copyFile(files[0],path.join(__dirname, filePath),()=>{
+      event.sender.send('selected-directory', targetExt)
     })
     
   })
