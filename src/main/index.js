@@ -27,6 +27,7 @@ function copyFile(src, dst,callback) {
     })
   }else{
     fs.writeFileSync(dst,fs.readFileSync(src))
+    callback()
   }
 }
 
@@ -133,7 +134,7 @@ ipcMain.on('open-file-dialog', function (event) {
     }
     let file = files[0]
     let ext = path.extname(file)
-    let filePath = process.env.NODE_ENV === "development" ? `../renderer/assets/bg/__user__${ext}` : `imgs/__user__--bg${ext}`
+    let filePath = process.env.NODE_ENV === "development" ? `../renderer/assets/bg/user${ext}` : `imgs/user--bg${ext}`
     copyFile(files[0],path.join(__dirname, filePath),(err)=>{
       event.sender.send('selected-directory', ext)
     })
@@ -142,8 +143,10 @@ ipcMain.on('open-file-dialog', function (event) {
 })
 
 ipcMain.on('on-bg-set',()=>{
-  app.relaunch()
-  app.exit(0)
+  if(process.env.NODE_ENV !== "development"){
+    app.relaunch()
+    app.exit(0)
+  }
 })
 
 ipcMain.on('open-console',()=>{

@@ -73,7 +73,7 @@ export default {
       if(ext === "$cancel-by-user$"){
         that.value = setting.getBackgroundImageOr("watermelon.jpg")
       }else{
-        let bg = `__user__${ext}`;
+        let bg = `user${ext}`;
         setting.setBackgroundImage(bg)
         setting.setUserBackGroundImage(bg)
         ipc.send('on-bg-set')
