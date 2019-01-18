@@ -23,8 +23,10 @@ function copyFile(src, dst,callback) {
   if(fs.existsSync(dst)){
     fs.unlink(dst,(err)=>{
       fs.writeFileSync(dst,fs.readFileSync(src))
-      callback()
+      callback(err)
     })
+  }else{
+    fs.writeFileSync(dst,fs.readFileSync(src))
   }
 }
 
@@ -130,8 +132,9 @@ ipcMain.on('open-file-dialog', function (event) {
     }
     let file = files[0]
     let ext = path.extname(file)
+    // event.sender.send('selected-directory', ext)
     let filePath = process.env.NODE_ENV === "development" ? `../renderer/assets/bg/__user__${ext}` : `imgs/__user__--bg${ext}`
-    copyFile(files[0],path.join(__dirname, filePath),()=>{
+    copyFile(files[0],path.join(__dirname, filePath),(err)=>{
       event.sender.send('selected-directory', ext)
     })
     
