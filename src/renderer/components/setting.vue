@@ -6,12 +6,14 @@
     <div class="block">
       <el-slider v-model="initValue" :min="0" :max="100" @change="onTransparencyChange"></el-slider>
     </div>
+    <el-button size="mini" :style="{width:'100%'}" @click="openConsole">控制台</el-button>
   </div>
 </template>
 
 <script>
 import Bus from "../assets/js/bus";
 import { UserSetting } from "../assets/js/utils";
+import { open } from 'fs';
 var setting = UserSetting.getInstance();
 const ipc = require("electron").ipcRenderer;
 var path = require("path");
@@ -60,14 +62,22 @@ export default {
     },
     onTransparencyChange(value) {
       Bus.$emit("on-tp-change", value);
+    },
+    openConsole(){
+      ipc.send("open-console")
     }
   },
   mounted() {
+    let that = this
     ipc.on("selected-directory", function(event, ext) {
-      let bg = `__user__${ext}`;
-      setting.setBackgroundImage(bg)
-      setting.setUserBackGroundImage(bg)
-      ipc.send('on-bg-set')
+      if(ext === "$cancel-by-user$"){
+        that.value = setting.getBackgroundImageOr("watermelon.jpg")
+      }else{
+        let bg = `__user__${ext}`;
+        setting.setBackgroundImage(bg)
+        setting.setUserBackGroundImage(bg)
+        ipc.send('on-bg-set')
+      }
     });
   }
 };
