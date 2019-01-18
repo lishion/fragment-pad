@@ -65,6 +65,7 @@
 #header {
   width: 100%;
   height: 60px;
+  position: fixed;
   left: 0;
   top: 50px;
 }
@@ -228,6 +229,12 @@ export default {
       self.alpha = alpha / 100.0;
       setting.setAlpha(alpha);
     });
+
+    // 滚动时搜索框自动消失
+    Bus.$on("on-scrolly",(top)=>{
+      this.showSearch = top ? "block":"none"
+    })
+    
     ipcRender.on("cancel", () => {
       self.cancel(self.editingItemKey);
     });

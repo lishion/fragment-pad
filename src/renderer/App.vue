@@ -6,7 +6,7 @@
     <div>
       <el-row>
         <el-col :span="22">
-          <div style="height:50px;-webkit-app-region: drag" id="header"></div>
+          <div style="height:50px;-webkit-app-region: drag" id="top"></div>
         </el-col>
         <el-col :span="2">
           <el-popover placement="bottom" trigger="click">
@@ -77,7 +77,13 @@ export default {
 
     window.onscroll = () => {
       let rollHeigth = window.scrollY;
+      console.info(window.scrollY)
       that.clientHeight = `${document.documentElement.clientHeight + window.scrollY}px`;
+      if(window.scrollY > 20){
+        Bus.$emit("on-scrolly",false)
+      }else{
+        Bus.$emit("on-scrolly",true)
+      }
     };
     
     //进入/退出搜索时，滚动条设置为0，避免继承上个页面的滚动条
@@ -105,7 +111,7 @@ export default {
       ipc.send("minimize");
     },
     toTop(){
-      let topEle = document.getElementById("header")
+      let topEle = document.getElementById("top")
       topEle.scrollIntoView({ behavior: "smooth" })
       this.clientHeight = "600px"
     }
