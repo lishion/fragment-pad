@@ -134,10 +134,15 @@ ipcMain.on('open-file-dialog', function (event) {
     }
     let file = files[0]
     let sourceExt = path.extname(file)
-    let targetExt = sourceExt.replace(".jpeg",".jpg")
-    let filePath = process.env.NODE_ENV === "development" ? `../renderer/assets/bg/user${sourceExt}` : `imgs/user--bg${targetExt}`
+    /**
+     * 目前动态替换 pack 后的文件有一个缺点
+     * 所有被替换的文件之前必须被pack 
+     * 即在 build 之前如果该文件不存在，就算之后被拷贝到项目下，使用 require() 也无法获得
+     * 因此所有图片拷贝到项目下之后都将改名为 user.jpg
+    */
+    let filePath = process.env.NODE_ENV === "development" ? `../renderer/assets/bg/user.jpg` : `imgs/user--bg.jpg`
     copyFile(files[0],path.join(__dirname, filePath),()=>{
-      event.sender.send('selected-directory', targetExt)
+      event.sender.send('selected-directory', ".jpg")
     })
     
   })
