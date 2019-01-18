@@ -46,9 +46,11 @@
 
 <script>
 import setting from "./components/setting";
-import { UserSetting } from "./assets/js/utils";
+import { UserSetting,SmoothPosition } from "./assets/js/utils";
 let userSetting = UserSetting.getInstance();
 import Bus from "./assets/js/bus";
+import { clearInterval } from 'timers';
+import { throws } from 'assert';
 export default {
   name: "fragment-pad",
   components: { setting },
@@ -60,7 +62,8 @@ export default {
       attachment: "fixed",
       repeat: "no-repeat",
       position: "center",
-      size: "cover"
+      size: "cover",
+      timer:null,
     };
   },
   mounted() {
@@ -77,11 +80,12 @@ export default {
 
     window.onscroll = () => {
       let rollHeigth = window.scrollY;
-      console.info(window.scrollY)
       that.clientHeight = `${document.documentElement.clientHeight + window.scrollY}px`;
-      if(window.scrollY > 20){
+      console.info(rollHeigth)
+      if(rollHeigth > 20){
         Bus.$emit("on-scrolly",false)
-      }else{
+      }else if(rollHeigth <= 0){
+        window.clearInterval(that.timer)
         Bus.$emit("on-scrolly",true)
       }
     };
@@ -111,9 +115,11 @@ export default {
       ipc.send("minimize");
     },
     toTop(){
-      let topEle = document.getElementById("top")
-      topEle.scrollIntoView({ behavior: "smooth" })
-      this.clientHeight = "600px"
+      let smooth = new SmoothPosition(window.scrollY,50)
+      this.timer = setInterval(() => {  
+        let position =  smooth.down()
+        window.scrollTo(0,position)
+      }, 10);
     }
   }
 };
@@ -124,6 +130,7 @@ export default {
   border: 0;
   margin: 0%;
 }
+body { scroll-behavior: smooth }
 ::-webkit-scrollbar {
   display: none;
 }

@@ -191,8 +191,30 @@ function setLinkRule(mdInstance) {
         return defaultRender(tokens, idx, options, env, self);
     };
 }
+class SmoothPosition{
+    constructor(offset,max_acceleration){
+        this.position = offset
+        this.acceleration = 5
+        this.max_acceleration = max_acceleration
+    }
+    add_acc(value){
+        if(this.acceleration <= this.max_acceleration){
+            this.acceleration += value
+        }   
+    }
+    up(){
+        this.position += this.acceleration
+        this.add_acc(1)
+        return this.position
+    }
+    down(){
+        this.position -= this.acceleration
+        this.add_acc(1)
+        return this.position
+    }
+}
 
 UserSetting.instance = null
-export { LevelDb, MessageBox, UserSetting,setLinkRule }
+export { LevelDb, MessageBox, UserSetting,setLinkRule,SmoothPosition }
 
 
