@@ -6,7 +6,7 @@
     <div>
       <el-row>
         <el-col :span="22">
-          <div style="height:50px;-webkit-app-region: drag"></div>
+          <div style="height:50px;-webkit-app-region: drag" id="header"></div>
         </el-col>
         <el-col :span="2">
           <el-popover placement="bottom" trigger="click">
@@ -18,6 +18,7 @@
         </el-col>
       </el-row>
     </div>
+    <i class="el-icon-caret-top" id='to-top' @click="toTop"></i>
     <router-view style="-webkit-app-region: no-drag"></router-view>
   </div>
 </template>
@@ -26,6 +27,20 @@
 .hljs {
   background: none;
 }
+#to-top {
+  position: fixed;
+  right: 10px;
+  top: 80%;
+  background: rgba(255, 255, 255, 0.5);
+  color: #409eff;
+  display: block;
+  line-height: 40px;
+  text-align: center;
+  font-size: 20px;
+  width: 40px;
+  border-radius: 50%;
+}
+
 </style>
 
 
@@ -88,6 +103,11 @@ export default {
     minimize() {
       var ipc = require("electron").ipcRenderer;
       ipc.send("minimize");
+    },
+    toTop(){
+      let topEle = document.getElementById("header")
+      topEle.scrollIntoView({ behavior: "smooth" })
+      this.clientHeight = "600px"
     }
   }
 };
