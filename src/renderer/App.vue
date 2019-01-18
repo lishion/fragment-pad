@@ -18,7 +18,7 @@
         </el-col>
       </el-row>
     </div>
-    <i class="el-icon-caret-top" id='to-top' @click="toTop"></i>
+    <i class="el-icon-caret-top" id="to-top" @click="toTop"></i>
     <router-view style="-webkit-app-region: no-drag"></router-view>
   </div>
 </template>
@@ -40,17 +40,16 @@
   width: 40px;
   border-radius: 50%;
 }
-
 </style>
 
 
 <script>
 import setting from "./components/setting";
-import { UserSetting,SmoothPosition } from "./assets/js/utils";
+import { UserSetting, SmoothPosition } from "./assets/js/utils";
 let userSetting = UserSetting.getInstance();
 import Bus from "./assets/js/bus";
-import { clearInterval } from 'timers';
-import { throws } from 'assert';
+import { clearInterval } from "timers";
+import { throws } from "assert";
 export default {
   name: "fragment-pad",
   components: { setting },
@@ -63,7 +62,7 @@ export default {
       repeat: "no-repeat",
       position: "center",
       size: "cover",
-      timer:null,
+      timer: null
     };
   },
   mounted() {
@@ -71,7 +70,7 @@ export default {
     const that = this;
     var rollHeight = 0;
     var clientHeight = 0;
-    
+
     // 窗体目前不允许 resize 所以代码暂时不起作用
     // window.onresize = () => {
     //   clientHeight = document.documentElement.clientHeight;
@@ -80,21 +79,27 @@ export default {
 
     window.onscroll = () => {
       let rollHeigth = window.scrollY;
-      that.clientHeight = `${document.documentElement.clientHeight + window.scrollY}px`;
-      console.info(rollHeigth)
-      if(rollHeigth > 20){
-        Bus.$emit("on-scrolly",false)
-      }else if(rollHeigth <= 0){
-        window.clearInterval(that.timer)
-        Bus.$emit("on-scrolly",true)
+      that.clientHeight = `${document.documentElement.clientHeight +
+        window.scrollY}px`;
+      console.info(that.clientHeight);
+      console.info(rollHeigth);
+
+      if (rollHeigth > 20) {
+        Bus.$emit("on-scrolly", false);
+      } else if (rollHeigth <= 0) {
+        window.clearInterval(that.timer);
+        Bus.$emit("on-scrolly", true);
       }
     };
-    
+
     //进入/退出搜索时，滚动条设置为0，避免继承上个页面的滚动条
     Bus.$on("on-search", () => {
       that.clientHeight = "600px";
     });
     Bus.$on("cancel-search", () => {
+      that.clientHeight = "600px";
+    });
+    Bus.$on("on-delete", () => {
       that.clientHeight = "600px";
     });
 
@@ -103,7 +108,6 @@ export default {
       this.bg_url = require(`./assets/bg/${bg}`);
       userSetting.setBackgroundImage(bg);
     });
-
   },
   methods: {
     changeBackground(bg) {
@@ -114,11 +118,11 @@ export default {
       var ipc = require("electron").ipcRenderer;
       ipc.send("minimize");
     },
-    toTop(){
-      let smooth = new SmoothPosition(window.scrollY,50)
-      this.timer = setInterval(() => {  
-        let position =  smooth.down()
-        window.scrollTo(0,position)
+    toTop() {
+      let smooth = new SmoothPosition(window.scrollY, 50);
+      this.timer = setInterval(() => {
+        let position = smooth.down();
+        window.scrollTo(0, position);
       }, 10);
     }
   }
@@ -130,7 +134,9 @@ export default {
   border: 0;
   margin: 0%;
 }
-body { scroll-behavior: smooth }
+body {
+  scroll-behavior: smooth;
+}
 ::-webkit-scrollbar {
   display: none;
 }

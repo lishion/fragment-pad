@@ -56,8 +56,6 @@
     </el-main>
 
     <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy"></div>
-
-  
   </el-container>
 </template>
 
@@ -217,10 +215,13 @@ export default {
       Bus.$emit("on-search");
     },
     onDeleteSuccess(key) {
+      var indexToDelete = -1;
       leveldb.deleteById(key, err => {
+        if (!err) {
+          this.items = this.items.filter(item => item.key != key);
+        }
         this.messageBox.showMessage(err);
       });
-      this.reload();
     }
   },
   mounted() {
@@ -231,10 +232,10 @@ export default {
     });
 
     // 滚动时搜索框自动消失
-    Bus.$on("on-scrolly",(top)=>{
-      this.showSearch = top ? "block":"none"
-    })
-    
+    Bus.$on("on-scrolly", top => {
+      this.showSearch = top ? "block" : "none";
+    });
+
     ipcRender.on("cancel", () => {
       self.cancel(self.editingItemKey);
     });
