@@ -76,7 +76,20 @@
         left: 0;
         top: 50px;     
     }
-    
+    #header input{
+        background: transparent;
+        border-top:none;
+        border-left:none;
+        border-right:none;   
+        outline: none;
+        border-radius:0px; 
+    }
+   
+    #header input:focus{
+        border-radius: 4px; 
+        background:rgba(255, 255, 255,0.8); 
+        border: none;
+    }
     #addcard  .el-input__inner{border: 0px ;border-bottom:1px solid rgb(200, 200, 159);border-radius:0 }
     #addcard  .el-textarea__inner{border: 0px;border-bottom:1px solid rgb(200, 200, 159);border-radius:0}
 
