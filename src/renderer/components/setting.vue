@@ -68,10 +68,9 @@ export default {
     }
   },
   mounted() {
-    let that = this
-    ipc.on("selected-directory", function(event, ext) {
+    ipc.on("selected-directory", (event, ext) => {
       if(ext === "$cancel-by-user$"){
-        that.value = setting.getBackgroundImageOr("watermelon.jpg")
+        this.value = setting.getBackgroundImageOr("watermelon.jpg")
       }else{
         let bg = `user${ext}`;
         setting.setBackgroundImage(bg)

@@ -67,41 +67,29 @@ export default {
   },
   mounted() {
     //监听 resize 与 onscroll 事件，动态调整div大小，避免背景图空白
-    const that = this;
     var rollHeight = 0;
     var clientHeight = 0;
 
     // 窗体目前不允许 resize 所以代码暂时不起作用
     // window.onresize = () => {
     //   clientHeight = document.documentElement.clientHeight;
-    //   that.clientHeight = `${document.documentElement.clientHeight + window.scrollY}px`;
+    //   this.clientHeight = `${document.documentElement.clientHeight + window.scrollY}px`;
     // };
 
     window.onscroll = () => {
       let rollHeigth = window.scrollY;
-      that.clientHeight = `${document.documentElement.clientHeight +
+      this.clientHeight = `${document.documentElement.clientHeight +
         window.scrollY}px`;
-      console.info(that.clientHeight);
-      console.info(rollHeigth);
-
       if (rollHeigth > 20) {
         Bus.$emit("on-scrolly", false);
       } else if (rollHeigth <= 0) {
-        window.clearInterval(that.timer);
+        window.clearInterval(this.timer);
         Bus.$emit("on-scrolly", true);
       }
     };
 
     //进入/退出搜索时，滚动条设置为0，避免继承上个页面的滚动条
-    Bus.$on("on-search", () => {
-      that.clientHeight = "600px";
-    });
-    Bus.$on("cancel-search", () => {
-      that.clientHeight = "600px";
-    });
-    Bus.$on("on-delete", () => {
-      that.clientHeight = "600px";
-    });
+    Bus.$on(["on-search","cancel-search","on-delete"], () => this.clientHeight = "600px")
 
     // 更换壁纸
     Bus.$on("on-bg-set", bg => {
@@ -123,7 +111,7 @@ export default {
       this.timer = setInterval(() => {
         let position = smooth.down();
         window.scrollTo(0, position);
-      }, 10);
+      }, 16);
     }
   }
 };
@@ -136,6 +124,9 @@ export default {
 }
 body {
   scroll-behavior: smooth;
+}
+input{
+  font-family:Consola
 }
 ::-webkit-scrollbar {
   display: none;

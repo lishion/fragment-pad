@@ -28,3 +28,6 @@ fragment-pad 是一款为整理碎片知识而开发的 APP ,基于 Electron 编
 
 ## demo
 ![](https://www.z4a.net/images/2018/12/25/fragment-pad.png)
+
+## 感谢
+* 输入，渲染部分采用了@hinesboy的[mavonEditor](https://github.com/hinesboy/mavonEditor#readme)

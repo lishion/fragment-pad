@@ -194,7 +194,7 @@ function setLinkRule(mdInstance) {
 class SmoothPosition{
     constructor(offset,max_acceleration){
         this.position = offset
-        this.acceleration = 5
+        this.acceleration = 7
         this.max_acceleration = max_acceleration
     }
     add_acc(value){
@@ -204,12 +204,12 @@ class SmoothPosition{
     }
     up(){
         this.position += this.acceleration
-        this.add_acc(1)
+        this.add_acc(2)
         return this.position
     }
     down(){
         this.position -= this.acceleration
-        this.add_acc(1)
+        this.add_acc(2)
         return this.position
     }
 }
