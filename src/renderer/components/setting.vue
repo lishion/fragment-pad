@@ -1,23 +1,60 @@
 <template>
-  <div>
-    <el-select v-model="value" placeholder="请选择壁纸" @change="onBackgroundChange">
+  <div style="width:300px">
+    <el-select v-model="value" placeholder="请选择壁纸" @change="onBackgroundChange" style="width:100%">
       <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
     </el-select>
+    <splitline :color="'rgb(240,235,213)'"></splitline>
+    <el-switch
+        v-model="storageModel"
+        active-text="本地模式"
+        inactive-text="远程模式"
+        active-color="#13ce66"
+        inactive-color="#409EFF"
+    >
+    </el-switch>
+    <splitline :color="'rgb(240,235,213)'"></splitline>
     <div class="block">
       <el-slider v-model="initValue" :min="0" :max="100" @change="onTransparencyChange"></el-slider>
     </div>
+    <splitline :color="'rgb(240,235,213)'"></splitline>
+    <div class="login-input">
+      <el-input v-model="user.username" placeholder="用户名"></el-input>
+      <el-input v-model="user.password" placeholder="密码"></el-input>
+      <el-button size="mini" :style="{width:'100%'}" @click="login">登录</el-button>
+    </div>
+    <splitline :color="'rgb(240,235,213)'"></splitline>
     <el-button size="mini" :style="{width:'100%'}" @click="openConsole">控制台</el-button>
   </div>
 </template>
 
+<style>
+  .login-input input{
+    margin-top: 3px;
+    margin-bottom:3px; 
+  }
+  .login-input button{
+    margin-top: 3px;
+    margin-bottom:3px; 
+  }
+</style>
+
+
+
+
 <script>
 import Bus from "../assets/js/bus";
-import { UserSetting } from "../assets/js/utils";
-import { open } from 'fs';
-var setting = UserSetting.getInstance();
+import { UserSetting, MessageBox } from "../assets/js/utils";
+import Sender from "../assets/js/sender";
+import { open } from "fs";
+import splitline from "./split-line"
+const setting = UserSetting.getInstance();
 const ipc = require("electron").ipcRenderer;
-var path = require("path");
+const path = require("path");
+const sender = Sender.getInstance();
+
+
 export default {
+  components: { splitline },
   data: function() {
     return {
       options: [
@@ -40,7 +77,7 @@ export default {
         {
           value: setting.getUserBackGroundImage(),
           label: "自定义背景",
-          user:true
+          user: true
         },
         {
           value: "__set__",
@@ -49,8 +86,11 @@ export default {
         }
       ],
       value: setting.getBackgroundImageOr("watermelon.jpg"),
-      initValue: setting.getAlphaOr(0.5)
-    }
+      initValue: setting.getAlphaOr(0.5),
+      user: { username: "", password: "" },
+      messageBox: new MessageBox(this),
+      storageModel: true
+    };
   },
   methods: {
     onBackgroundChange(value) {
@@ -63,19 +103,26 @@ export default {
     onTransparencyChange(value) {
       Bus.$emit("on-tp-change", value);
     },
-    openConsole(){
-      ipc.send("open-console")
+    openConsole() {
+      ipc.send("open-console");
+    },
+    login() {
+      sender
+        .get("fetch_crsf_token")
+        .then(() => sender.post("login", this.user))
+        .then(() => this.messageBox.success("登录成功"))
+        .catch(message => this.messageBox.failed(message));
     }
   },
   mounted() {
     ipc.on("selected-directory", (event, ext) => {
-      if(ext === "$cancel-by-user$"){
-        this.value = setting.getBackgroundImageOr("watermelon.jpg")
-      }else{
+      if (ext === "$cancel-by-user$") {
+        this.value = setting.getBackgroundImageOr("watermelon.jpg");
+      } else {
         let bg = `user${ext}`;
-        setting.setBackgroundImage(bg)
-        setting.setUserBackGroundImage(bg)
-        ipc.send('on-bg-set')
+        setting.setBackgroundImage(bg);
+        setting.setUserBackGroundImage(bg);
+        ipc.send("on-bg-set");
       }
     });
   }
