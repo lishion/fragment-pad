@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import VueAxios from 'vue-axios'
 
 import App from './App'
 import router from './router'
@@ -10,11 +11,14 @@ import 'highlight.js/styles/default.css'
 import index from './components/index'
 import "./assets/font/index.css"
 
+ 
+Vue.use(VueAxios, axios)
+Vue.use(ElementUI)
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
-Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
-Vue.use(ElementUI);
+
 
 /* eslint-disable no-new */
 new Vue({

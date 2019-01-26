@@ -32,7 +32,7 @@
 
 
 <script>
-import { LevelDb, MessageBox,setLinkRule } from "../assets/js/utils";
+import {MessageBox,setLinkRule } from "../assets/js/utils";
 import { mavonEditor } from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
 let mdInstance = mavonEditor.getMarkdownIt()
@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     save(raw_text,mark_text){
-        var title = this.item.value.title;
+        let title = this.item.value.title;
         if (title.match(/^\s+?$/) || title === "") {
             this.item.value.title = "我是不是忘了写标题??";
         }

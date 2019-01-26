@@ -98,11 +98,13 @@
 import infocard from "./info-card";
 import addcard from "./add-card";
 import infiniteScroll from "vue-infinite-scroll";
-import { LevelDb, MessageBox, UserSetting } from "../assets/js/utils";
+import {MessageBox, UserSetting } from "../assets/js/utils";
+import db from "../assets/js/db.js"
 import Bus from "../assets/js/bus";
-let leveldb = LevelDb.getInstance();
 let setting = UserSetting.getInstance();
 let ipcRender = require("electron").ipcRenderer;
+
+console.info(db.instance)
 
 export default {
   name: "index",
@@ -127,7 +129,7 @@ export default {
   },
   methods: {
     loadData() {
-      leveldb.getLatest(5, this.latestKey, data => {
+      db.instance.getLatest(5, this.latestKey, data => {
         if (this.latestKey !== data.key) {
           this.items.push(data);
           this.latestKey = data.key;
@@ -176,7 +178,7 @@ export default {
         // 如果key为new-one 则表示这是一条需要新增的数据，需要删除key
         delete item.key;
       }
-      leveldb.put(item, err => {
+      db.instance.put(item, err => {
         this.messageBox.showMessage(err);
         if (!err) {
           this.exitEditMode();
@@ -208,7 +210,7 @@ export default {
     search(keyword) {
       this.searchMode = true;
       this.items = []; // 清空数据
-      leveldb.search(keyword, data => {
+      db.instance.search(keyword, data => {
         this.items.push(data);
       });
       this.icon = "el-icon-search";
@@ -216,7 +218,7 @@ export default {
     },
     onDeleteSuccess(key) {
       var indexToDelete = -1;
-      leveldb.deleteById(key, err => {
+      db.instance.deleteById(key, err => {
         if (!err) {
           this.items = this.items.filter(item => item.key != key);
         }
