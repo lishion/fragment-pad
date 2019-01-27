@@ -6,10 +6,11 @@
     <splitline :color="'rgb(240,235,213)'"></splitline>
     <el-switch
       v-model="storageModel"
-      active-text="本地模式"
-      inactive-text="远程模式"
+      active-text="远程模式"
+      inactive-text="本地模式"
       active-color="#13ce66"
       inactive-color="#409EFF"
+      @change="storageModelChange"
     ></el-switch>
     <splitline :color="'rgb(240,235,213)'"></splitline>
     <div class="block">
@@ -17,7 +18,9 @@
     </div>
     <splitline :color="'rgb(240,235,213)'"></splitline>
     <div class="login-input">
-      <div v-if="isLoggedIn"><el-tag type="success">已登录</el-tag></div>
+      <div v-if="isLoggedIn" style="width:100%">
+        <el-tag :style="{width:'100%',textAlign:'center'}">已登录</el-tag>
+      </div>
       <div v-else>
         <el-input v-model="user.username" placeholder="用户名"></el-input>
         <el-input v-model="user.password" placeholder="密码"></el-input>
@@ -91,7 +94,7 @@ export default {
       initValue: setting.getAlphaOr(0.5),
       user: { username: "", password: "" },
       messageBox: new MessageBox(this),
-      storageModel: true,
+      storageModel: false, // true: 远程模式, false: 本地模式
       isLoggedIn: false
     };
   },
@@ -114,10 +117,14 @@ export default {
         .get("fetch_crsf_token")
         .then(() => sender.post("login", this.user))
         .then(() => {
-          this.messageBox.success("登录成功")
-          this.isLoggedIn = true
+          this.messageBox.success("登录成功");
+          this.isLoggedIn = true;
         })
         .catch(message => this.messageBox.failed(message));
+    },
+    storageModelChange(isRemote){
+      const storageModel = isRemote ? "remote":"local"
+      setting.setDbType(storageModel)
     }
   },
   mounted() {
@@ -131,7 +138,8 @@ export default {
         ipc.send("on-bg-set");
       }
     });
-    this.isLoggedIn = document.cookie.indexOf("sessionid") !== -1;
+    this.isLoggedIn = document.cookie.indexOf("sessionid") !== -1; // 如果 cookie 中存在sessionid 则用户已登录
+    this.storageModel = setting.getDbType() === "remote"
   }
 };
 </script>
