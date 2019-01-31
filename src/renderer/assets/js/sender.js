@@ -17,13 +17,15 @@ export default class Sender {
     }
 
     static getInstance(){
+        const dev = process.env.NODE_ENV === "development"
         if(!Sender.instance){
             const axiosInstance = axios.create({
+                baseURL: dev ? "http://127.0.0.1:8000" : "http://www.fern-li.cn",
                 xsrfCookieName:'csrftoken',
-                xsrfHeaderName:'X-CSRFtoken'
+                xsrfHeaderName:'X-CSRFtoken',
+                withCredentials: true
             });
-            axiosInstance.defaults.withcredentials=true
-            Sender.instance =  new Sender(axiosInstance)
+            Sender.instance = new Sender(axiosInstance)
         }
         return Sender.instance
     }
