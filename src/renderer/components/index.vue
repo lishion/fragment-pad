@@ -182,12 +182,12 @@ export default {
         delete item.key;
       }
       db.instance.put(item, err => {
+        this.messageBox.showMessage(err);
         if (!err) {
+          this.messageBox
           this.exitEditMode();
           this.reload();
-        } else {
-          this.messageBox.showMessage(err);
-        }
+        }  
       });
     },
 
@@ -223,14 +223,13 @@ export default {
     onDeleteSuccess(key) {
       var indexToDelete = -1;
       db.instance.deleteById(key, err => {
+        this.messageBox.showMessage(err);
         if (!err) {
           this.items = this.items.filter(item => item.key != key);
           if (this.items.length <= 4) {
             this.loadData();
           }
-        } else {
-          this.messageBox.showMessage(err);
-        }
+        }  
       });
     }
   },
