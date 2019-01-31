@@ -55,7 +55,7 @@ export default class Sender {
                     }
                 })
                 .catch(e => {
-                    reject(e);
+                    reject("网络或服务器异常");
                 });
         });
     }

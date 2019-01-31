@@ -18,8 +18,8 @@
     </div>
     <splitline :color="'rgb(240,235,213)'"></splitline>
     <div class="login-input">
-      <div v-if="isLoggedIn" style="width:100%">
-        <el-tag :style="{width:'100%',textAlign:'center'}">已登录</el-tag>
+      <div v-if="displayLoginForm" style="width:100%">
+        <el-tag :style="{width:'100%',textAlign:'center'}" :type="tagType">{{userStatus}}</el-tag>
       </div>
       <div v-else>
         <el-input v-model="user.username" placeholder="用户名"></el-input>
@@ -95,7 +95,9 @@ export default {
       user: { username: "", password: "" },
       messageBox: new MessageBox(this),
       storageModel: false, // true: 远程模式, false: 本地模式
-      isLoggedIn: false
+      displayLoginForm: false,
+      tagType: "",
+      userStatus: "已登录"
     };
   },
   methods: {
@@ -118,15 +120,17 @@ export default {
         .then(() => sender.post("login", this.user))
         .then(() => {
           this.messageBox.success("登录成功");
-          this.isLoggedIn = true;
+          this.userStatus = "已登录";
+          this.tagType = "";
+          this.displayLoginForm = true;
           Bus.$emit("login-success");
         })
         .catch(message => this.messageBox.failed(message));
     },
-    storageModelChange(isRemote){
-      const storageModel = isRemote ? "remote":"local"
-      setting.setDbType(storageModel)
-      Bus.$emit("change-storage-model")
+    storageModelChange(isRemote) {
+      const storageModel = isRemote ? "remote" : "local";
+      setting.setDbType(storageModel);
+      Bus.$emit("change-storage-model");
     }
   },
   mounted() {
@@ -140,8 +144,23 @@ export default {
         ipc.send("on-bg-set");
       }
     });
-    this.isLoggedIn = document.cookie.indexOf("sessionid") !== -1; // 如果 cookie 中存在sessionid 则用户已登录
-    this.storageModel = setting.getDbType() === "remote"
+    sender
+      .get("status")
+      .then(() => {
+        this.userStatus = "已登录";
+        this.tagType = "";
+        this.displayLoginForm = true;
+      })
+      .catch(message => {
+        if (message.indexOf("未登录") !== -1) {
+          this.displayLoginForm = false;
+        } else {
+          this.displayLoginForm = true;
+          this.userStatus = "网络错误";
+          this.tagType = "warning"
+        }
+      });
+    this.storageModel = setting.getDbType() === "remote";
   }
 };
 </script>
