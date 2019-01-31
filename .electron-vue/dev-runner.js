@@ -39,6 +39,7 @@ function logStats (proc, data) {
 }
 
 function startRenderer () {
+  console.info(process.env.NODE_ENV)
   return new Promise((resolve, reject) => {
     rendererConfig.entry.renderer = [path.join(__dirname, 'dev-client')].concat(rendererConfig.entry.renderer)
 
@@ -69,10 +70,16 @@ function startRenderer () {
           ctx.middleware.waitUntilValid(() => {
             resolve()
           })
-        }
-      }
+        },
+        // proxy: {
+        //   '*': {
+        //     target: "http://127.0.0.1:8000" ,//"http://www.fern-li.cn" ,
+        //     secure: false,
+        //     changeOrigin: true
+        //   }
+        // }    
+      },
     )
-
     server.listen(9080)
   })
 }
