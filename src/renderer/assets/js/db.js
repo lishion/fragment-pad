@@ -30,9 +30,22 @@ class AutoIncrementID {
 class Db{
     put(item,func){}
     deleteById(id,func){}
-    getLatest(batchNum, maxKey = null, func){}
+    getLatest(batchNum, maxKey = null, func,err){}
     search(keyword, func){}
     static getInstance(){}
+    replaceMany(string, keywords, replaceFunc) {
+        var pattern
+        if (keywords.indexOf(" ") != -1) {
+            var eachKeyword = keywords.split(" ")
+            eachKeyword = eachKeyword.map((item, index, input) => {
+                return `(${item})`
+            })
+            pattern = RegExp(eachKeyword.join("|"), 'ig')
+        } else {
+            pattern = RegExp(keywords, 'ig')
+        }
+        return string.replace(pattern, replaceFunc)
+    }
 } 
 
 class LevelDb extends Db {
@@ -85,7 +98,7 @@ class LevelDb extends Db {
         this.levelDb.del(id, func)
     }
 
-    getLatest(batchNum, maxKey = null, func) {
+    getLatest(batchNum, maxKey = null, func,err) {
         var option = { "reverse": true, "limit": batchNum }
         if (maxKey) {
             option["lt"] = maxKey
@@ -94,19 +107,7 @@ class LevelDb extends Db {
             func(data)
         })
     }
-    replaceMany(string, keywords, replaceFunc) {
-        var pattern
-        if (keywords.indexOf(" ") != -1) {
-            var eachKeyword = keywords.split(" ")
-            eachKeyword = eachKeyword.map((item, index, input) => {
-                return `(${item})`
-            })
-            pattern = RegExp(eachKeyword.join("|"), 'ig')
-        } else {
-            pattern = RegExp(keywords, 'ig')
-        }
-        return string.replace(pattern, replaceFunc)
-    }
+    
     search(keywords, func) {
         var option = { "reverse": true, "limit": -1 }
         const renderHighlight = word => `<span style='background:yellow'>${word}</span>`
@@ -127,12 +128,68 @@ class LevelDb extends Db {
 
 LevelDb.instance = null
 
+import Sender from "./sender"
+
 class MySQLDb extends Db {
     constructor(){
         super()
+        this.sender = Sender.getInstance()
+    }
+    getLatest(batchNum, maxKey = null, func,err) {
+        const latestKey = maxKey || 0
+        this.sender.get(`note?latest=${latestKey}`)
+        .then((data)=>{
+            for(const item of data){
+                func({key:item.key,value:item})
+            }
+        })
+        .catch(err)
+    }
+    searchMatch(keyword,func){
+        this.sender.get(`note?keyword=${keyword}`)
+        .then((data)=>{
+            for(const item of data){
+                func({key:item.key,value:item})
+            }
+        })
+    }
+    put(item, func) {
+        const data = item.value
+        data["key"] = item["key"]
+        this.sender.post("note",data)
+        .then(()=>func(null))
+        .catch(func)
+    }
+
+    deleteById(id, func) {
+        this.sender.delete("note",{"key":id})
+        .then(()=>func(null))
+        .catch(func)
+    }
+
+    search(keywords, func) {
+        const renderHighlight = word => `<span style='background:yellow'>${word}</span>`
+        this.searchMatch(keywords,(data)=>{
+            var title = data.value.title
+            var marked_content = data.value.marked_content
+            var replacedTitle = this.replaceMany(title, keywords, renderHighlight)
+            var replacedContent = this.replaceMany(marked_content, keywords, renderHighlight)
+            if (replacedContent !== marked_content || replacedTitle !== title) {
+                data.value.rendered_title = replacedTitle
+                data.value.marked_content = replacedContent
+                func(data)
+            }
+        })
+    }
+
+    static getInstance(){
+        if(MySQLDb.instance === null){
+            MySQLDb.instance = new MySQLDb()
+        }
+        return MySQLDb.instance
     }
 }
-
+MySQLDb.instance = null
 
 import {UserSetting} from "./utils"
 
@@ -142,11 +199,6 @@ class DBTool{
         return this.dbFactory(dbType)
     }
     dbFactory(dbType){
-        // switch(type){
-        //     case "local":return LevelDb.getInstance()
-        //     case "remote":return MySQLDb.getInstance()
-        //     default : return MySQLDb.getInstance()
-        // }
         if(dbType === "local"){
             return LevelDb.getInstance()
         }else if(dbType === "remote"){
@@ -159,7 +211,6 @@ class DBTool{
         return UserSetting.getInstance().getDbType()
     }
     get instance(){
-        console.info(this.getDbInstance())
         return this.getDbInstance()
     }
 }

@@ -114,17 +114,19 @@ export default {
     },
     login() {
       sender
-        .get("fetch_crsf_token")
+        .get("fetch_csrf_token")
         .then(() => sender.post("login", this.user))
         .then(() => {
           this.messageBox.success("登录成功");
           this.isLoggedIn = true;
+          Bus.$emit("login-success");
         })
         .catch(message => this.messageBox.failed(message));
     },
     storageModelChange(isRemote){
       const storageModel = isRemote ? "remote":"local"
       setting.setDbType(storageModel)
+      Bus.$emit("change-storage-model")
     }
   },
   mounted() {

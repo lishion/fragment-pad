@@ -48,7 +48,8 @@ function createWindow () {
     minHeight:height,
     frame: false,
     resizable:false,
-    icon:path.join(__dirname,iconPath)
+    icon:path.join(__dirname,iconPath),
+    webPreferences: {webSecurity: false}
   })
   mainWindow.webContents.closeDevTools() //取消自动显示工具栏
   mainWindow.setMenu(null) //取消菜单栏

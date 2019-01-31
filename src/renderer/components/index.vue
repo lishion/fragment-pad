@@ -98,13 +98,11 @@
 import infocard from "./info-card";
 import addcard from "./add-card";
 import infiniteScroll from "vue-infinite-scroll";
-import {MessageBox, UserSetting } from "../assets/js/utils";
-import db from "../assets/js/db.js"
+import { MessageBox, UserSetting } from "../assets/js/utils";
+import db from "../assets/js/db.js";
 import Bus from "../assets/js/bus";
 let setting = UserSetting.getInstance();
 let ipcRender = require("electron").ipcRenderer;
-
-console.info(db.instance)
 
 export default {
   name: "index",
@@ -129,12 +127,17 @@ export default {
   },
   methods: {
     loadData() {
-      db.instance.getLatest(5, this.latestKey, data => {
-        if (this.latestKey !== data.key) {
-          this.items.push(data);
-          this.latestKey = data.key;
-        }
-      });
+      db.instance.getLatest(
+        5,
+        this.latestKey,
+        data => {
+          if (this.latestKey !== data.key) {
+            this.items.push(data);
+            this.latestKey = data.key;
+          }
+        },
+        err => this.messageBox.failed(err)
+      );
     },
     loadMore: function() {
       if (!this.searchMode) {
@@ -179,10 +182,11 @@ export default {
         delete item.key;
       }
       db.instance.put(item, err => {
-        this.messageBox.showMessage(err);
         if (!err) {
           this.exitEditMode();
           this.reload();
+        } else {
+          this.messageBox.showMessage(err);
         }
       });
     },
@@ -221,25 +225,30 @@ export default {
       db.instance.deleteById(key, err => {
         if (!err) {
           this.items = this.items.filter(item => item.key != key);
+          if (this.items.length <= 4) {
+            this.loadData();
+          }
+        } else {
+          this.messageBox.showMessage(err);
         }
-        this.messageBox.showMessage(err);
       });
     }
   },
   mounted() {
-    let self = this;
     Bus.$on("on-tp-change", alpha => {
-      self.alpha = alpha / 100.0;
+      this.alpha = alpha / 100.0;
       setting.setAlpha(alpha);
     });
-
+    //登录成功、改变存储模式时自动切换数据显示
+    Bus.$on(["login-success", "change-storage-model"], () => {
+      this.reload();
+    });
     // 滚动时搜索框自动消失
     Bus.$on("on-scrolly", top => {
       this.showSearch = top ? "block" : "none";
     });
-
     ipcRender.on("cancel", () => {
-      self.cancel(self.editingItemKey);
+      this.cancel(this.editingItemKey);
     });
   }
 };

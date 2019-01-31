@@ -52,7 +52,7 @@ class UserSetting {
         this.store.set("dbType",type)
     }
     getDbType(){
-        return this.getOr("local")
+        return this.getOr("dbType","local")
     }
     static getInstance() {
         if (UserSetting.instance === null) {

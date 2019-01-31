@@ -11,13 +11,11 @@ import 'highlight.js/styles/default.css'
 import index from './components/index'
 import "./assets/font/index.css"
 
- 
 Vue.use(VueAxios, axios)
 Vue.use(ElementUI)
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.config.productionTip = false
-
 
 
 /* eslint-disable no-new */
