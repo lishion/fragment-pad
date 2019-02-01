@@ -10,7 +10,9 @@ import 'element-ui/lib/theme-chalk/index.css';
 import 'highlight.js/styles/default.css'
 import index from './components/index'
 import "./assets/font/index.css"
+import Vuex from 'vuex'
 
+Vue.use(Vuex)
 Vue.use(VueAxios, axios)
 Vue.use(ElementUI)
 

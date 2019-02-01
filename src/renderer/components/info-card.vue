@@ -7,10 +7,11 @@
                 </el-col>
                 <el-col :span="4">
                     <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('on-delete',itemKey)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('on-sync',itemKey)" v-if="!remoteModel&&sync!==1">{{sync}}</el-button>
                 </el-col>
             </el-row>
         </div>
-        <div class="text item" @dblclick="$emit('on-modify')">
+        <div class="text item" @click="$emit('on-modify')">
             <slot name="content"></slot>
         </div>
     </el-card>
@@ -45,10 +46,17 @@
 
 <script>
 let ipcRender = require('electron').ipcRenderer
+import { mapState } from 'vuex'
+import { remote } from 'electron';
+
 export default {
     name:"infocard",
-    props:['itemKey','searchMode','editingItemKey'],
-
+    props:['itemKey','searchMode','editingItemKey','sync'],
+    computed:{
+        remoteModel(){
+            return this.$store.state.Fragment.remoteModel
+        }
+    },
     mounted(){
        var doms =  document.getElementsByClassName('content-url')
        for(var i=0;i<doms.length;i++){

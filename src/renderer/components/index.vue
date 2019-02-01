@@ -39,7 +39,9 @@
           id="infocard"
           @on-delete="onDeleteSuccess"
           @on-modify="modify(item)"
+          @on-sync="sync(item)"
           :itemKey="item.key"
+          :sync="item.value.sync"
           :searchMode="searchMode"
           :editingItemKey="editingItemKey"
           :style="{backgroundColor: 'rgba(255, 255, 255,' + alpha + ')'}"
@@ -154,6 +156,17 @@ export default {
         }
       };
     },
+    sync(item){
+      db.remoteDb.put({"value":item.value}, err => {
+        if (!err) {
+          item.value.sync = 1
+          this.save(item)
+          this.messageBox.success("同步成功");
+        }else{
+          this.messageBox.failed("同步失败")
+        } 
+      });
+    },
     reload() {
       // 重新加载页面
       this.items = []; // 清空数据
@@ -184,7 +197,6 @@ export default {
       db.instance.put(item, err => {
         this.messageBox.showMessage(err);
         if (!err) {
-          this.messageBox
           this.exitEditMode();
           this.reload();
         }  

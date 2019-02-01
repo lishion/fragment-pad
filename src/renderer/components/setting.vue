@@ -5,7 +5,7 @@
     </el-select>
     <splitline :color="'rgb(240,235,213)'"></splitline>
     <el-switch
-      v-model="storageModel"
+      v-model="isRemoteMode"
       active-text="远程模式"
       inactive-text="本地模式"
       active-color="#13ce66"
@@ -53,11 +53,14 @@ import Sender from "../assets/js/sender";
 import { open } from "fs";
 import splitline from "./split-line";
 import { constants } from "http2";
+
+
 const setting = UserSetting.getInstance();
 const ipc = require("electron").ipcRenderer;
 const path = require("path");
 const sender = Sender.getInstance();
-
+const LOCAL_MODEL = false;
+const REMOTE_MODEL = true;
 export default {
   components: { splitline },
   data: function() {
@@ -94,7 +97,7 @@ export default {
       initValue: setting.getAlphaOr(0.5),
       user: { username: "", password: "" },
       messageBox: new MessageBox(this),
-      storageModel: false, // true: 远程模式, false: 本地模式
+      isRemoteMode: false, // true: 远程模式, false: 本地模式
       displayLoginForm: false,
       tagType: "",
       userStatus: "已登录"
@@ -127,9 +130,14 @@ export default {
         })
         .catch(message => this.messageBox.failed(message));
     },
-    storageModelChange(isRemote) {
-      const storageModel = isRemote ? "remote" : "local";
+    storageModelChange(isRemoteMode) {
+      const storageModel = isRemoteMode ? "remote" : "local"
       setting.setDbType(storageModel);
+      if(isRemoteMode){
+        this.$store.commit("switchToRemote")
+      }else{
+        this.$store.commit("switchToLocal")
+      }
       Bus.$emit("change-storage-model");
     }
   },
@@ -160,7 +168,12 @@ export default {
           this.tagType = "warning"
         }
       });
-    this.storageModel = setting.getDbType() === "remote";
+    if(setting.getDbType() === "remote"){
+      this.isRemoteMode = true
+      this.$store.commit("switchToRemote")
+    }else{
+      this.$store.commit("switchToLocal")
+    }
   }
 };
 </script>

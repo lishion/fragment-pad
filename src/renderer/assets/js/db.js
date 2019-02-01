@@ -64,7 +64,9 @@ class LevelDb extends Db {
             var path = require('path')
             var dbPath = path.join(__dirname, '../../../../mydb')
             var db = levelup(encode(leveldown(dbPath), { valueEncoding: 'json' }))
+            console.info(LevelDb.instance)
             LevelDb.instance = new LevelDb(db)
+           
         }
         return LevelDb.instance
     }
@@ -84,7 +86,6 @@ class LevelDb extends Db {
     }
 
     put(item, func) {
-
         if (!item.key) { //如果key不存在，则表示这是一个新增的数据
             this.autoIncrementKey((key) => {
                 this.levelDb.put(key, item.value, func) //存入数据库 
@@ -126,7 +127,7 @@ class LevelDb extends Db {
     }
 }
 
-LevelDb.instance = null
+LevelDb.instance = LevelDb.instance || null
 
 import Sender from "./sender"
 
@@ -155,7 +156,10 @@ class MySQLDb extends Db {
     }
     put(item, func) {
         const data = item.value
-        data["key"] = item["key"]
+        const key = item.key
+        if(key){
+            data["key"] = key
+        }
         this.sender.post("note",data)
         .then(()=>func(null))
         .catch(func)
@@ -181,15 +185,16 @@ class MySQLDb extends Db {
             }
         })
     }
-
+    
     static getInstance(){
-        if(MySQLDb.instance === null){
+        if(!MySQLDb.instance){
             MySQLDb.instance = new MySQLDb()
         }
         return MySQLDb.instance
     }
 }
-MySQLDb.instance = null
+
+MySQLDb.instance = MySQLDb.instance || null
 
 import {UserSetting} from "./utils"
 
@@ -206,7 +211,12 @@ class DBTool{
         }
         return LevelDb.getInstance()
     }
-
+    get remoteDb(){
+        return MySQLDb.getInstance()
+    }
+    get localDb(){
+        return LevelDb.getInstance()
+    }
     getDbType(){
         return UserSetting.getInstance().getDbType()
     }
