@@ -55,7 +55,16 @@ export default class Sender {
                     }
                 })
                 .catch(e => {
-                    reject("网络或服务器异常");
+                    if(e.response){
+                        const data = e.response.data
+                        if(data && "message" in data){
+                            reject(data.message)
+                        }else{
+                            reject("网络错误")
+                        }
+                    }else{
+                        reject("网络错误")
+                    }
                 });
         });
     }
