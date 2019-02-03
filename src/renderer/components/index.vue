@@ -194,13 +194,18 @@ export default {
         // 如果key为new-one 则表示这是一条需要新增的数据，需要删除key
         delete item.key;
       }
-      db.instance.put(item, err => {
-        this.messageBox.showMessage(err);
-        if (!err) {
-          this.exitEditMode();
-          this.reload();
-        }  
-      });
+      db.instance.put(
+        item, 
+        err => this.messageBox.showMessage(err),
+        data => {
+          this.messageBox.success("成功啦^_^")
+          this.exitEditMode()
+          if(data){
+            this.items.shift()
+            this.items.unshift(data)
+          }
+        }
+      );
     },
 
     cancel(item = null) {

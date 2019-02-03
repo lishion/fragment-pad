@@ -136,12 +136,12 @@ class MySQLDb extends Db {
         super()
         this.sender = Sender.getInstance()
     }
-    getLatest(batchNum, maxKey = null, func,err) {
+    getLatest(batchNum, maxKey = null, success,err) {
         const latestKey = maxKey || 0
         this.sender.get(`note?latest=${latestKey}`)
         .then((data)=>{
             for(const item of data){
-                func({key:item.key,value:item})
+                success({key:item.key,value:item})
             }
         })
         .catch(err)
@@ -154,15 +154,15 @@ class MySQLDb extends Db {
             }
         })
     }
-    put(item, func) {
+    put(item, err,success) {
         const data = item.value
         const key = item.key
         if(key){
             data["key"] = key
         }
         this.sender.post("note",data)
-        .then(()=>func(null))
-        .catch(func)
+        .then(data => success(data && {key:data["key"],value:data}))
+        .catch(err)
     }
 
     deleteById(id, func) {
