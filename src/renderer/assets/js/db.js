@@ -28,7 +28,7 @@ class AutoIncrementID {
 
 
 class Db{
-    put(item,func){}
+    put(item, success, error){}
     deleteById(id,func){}
     getLatest(batchNum, maxKey = null, func,err){}
     search(keyword, func){}
@@ -85,14 +85,15 @@ class LevelDb extends Db {
             })
     }
 
-    put(item, func) {
+    put(item, success, error) {
+        const callback = (key, value, err) => err ?  error("同步失败") : success({key:key, value:value})
         if (!item.key) { //如果key不存在，则表示这是一个新增的数据
             this.autoIncrementKey((key) => {
-                this.levelDb.put(key, item.value, func) //存入数据库 
+                this.levelDb.put(key, item.value, err => callback(key, item.value, err)) //存入数据库 
             })
             return
         }
-        this.levelDb.put(item.key, item.value, func) //存入数据库 
+        this.levelDb.put(item.key, item.value, err => callback(item.key, item.value, err)) //存入数据库 
     }
 
     deleteById(id, func) {
@@ -154,7 +155,7 @@ class MySQLDb extends Db {
             }
         })
     }
-    put(item, err,success) {
+    put(item, success, err) {
         const data = item.value
         const key = item.key
         if(key){

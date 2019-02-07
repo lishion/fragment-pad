@@ -12,3 +12,4 @@ thumbs.db
 src/renderer/assets/js/test.js
 src/renderer/assets/js/mydb
 .vscode
+package-lock.json

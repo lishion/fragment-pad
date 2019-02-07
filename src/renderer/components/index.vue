@@ -157,15 +157,11 @@ export default {
       };
     },
     sync(item){
-      db.remoteDb.put({"value":item.value}, err => {
-        if (!err) {
-          item.value.sync = 1
-          this.save(item)
-          this.messageBox.success("同步成功");
-        }else{
-          this.messageBox.failed("同步失败")
-        } 
-      });
+      db.remoteDb.put(
+        {"value":item.value}, 
+        () => this.messageBox.success("同步成功"),
+        err => this.messageBox.failed(err)
+      )
     },
     reload() {
       // 重新加载页面
@@ -196,7 +192,6 @@ export default {
       }
       db.instance.put(
         item, 
-        err => this.messageBox.showMessage(err),
         data => {
           this.messageBox.success("成功啦^_^")
           this.exitEditMode()
@@ -204,7 +199,8 @@ export default {
             this.items.shift()
             this.items.unshift(data)
           }
-        }
+        },
+        err => this.messageBox.showMessage(err)
       );
     },
 
