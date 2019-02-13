@@ -157,8 +157,12 @@ export default {
       };
     },
     sync(item){
+      const value = Object.assign({}, item["value"])
+      if("" in value){
+        delete value["rendered_title"]
+      }
       db.remoteDb.put(
-        {"value":item.value}, 
+        {"value":value}, 
         () => this.messageBox.success("同步成功"),
         err => this.messageBox.failed(err)
       )
