@@ -157,8 +157,8 @@ export default {
       };
     },
     sync(item){
-      const value = Object.assign({}, item["value"])
-      if("" in value){
+      const value = {...item["value"]}
+      if("rendered_title" in value){
         delete value["rendered_title"]
       }
       db.remoteDb.put(
@@ -198,14 +198,14 @@ export default {
         item, 
         data => {
           this.messageBox.success("成功啦^_^")
-          this.exitEditMode()
           if(data){
-            this.items.shift()
             this.items.unshift(data)
           }
         },
         err => this.messageBox.showMessage(err)
       );
+      this.items.shift()
+      this.exitEditMode()
     },
 
     cancel(item = null) {
