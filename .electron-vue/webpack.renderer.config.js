@@ -19,7 +19,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/webpack-configurations.html#white-listing-externals
  */
 let whiteListedModules = ['vue']
-
+const jsLoader = {
+  'loader':'babel-loader',
+  'options':{
+    presets: ['babel-preset-stage-3'],
+    plugins: ['babel-plugin-transform-runtime']
+  }
+}
 let rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
@@ -43,7 +49,7 @@ let rendererConfig = {
       },
       {
         test: /\.js$/,
-        use: 'babel-loader',
+        use: jsLoader,
         exclude: /node_modules/
       },
       {
@@ -58,7 +64,8 @@ let rendererConfig = {
             extractCSS: process.env.NODE_ENV === 'production',
             loaders: {
               sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
-              scss: 'vue-style-loader!css-loader!sass-loader'
+              scss: 'vue-style-loader!css-loader!sass-loader',
+              js: jsLoader
             }
           }
         }
