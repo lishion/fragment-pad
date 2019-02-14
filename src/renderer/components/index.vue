@@ -213,8 +213,11 @@ export default {
         },
         err => this.messageBox.showMessage(err)
       );
-      this.searchMode && this.exitSearchMode()
-      this.exitEditMode();
+      if(this.searchMode){
+        this.exitSearchMode();
+        this.reload() 
+      }
+      this.exitEditMode()
     },
 
     cancel(item = null) {
