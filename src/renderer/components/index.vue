@@ -188,11 +188,12 @@ export default {
         this.editMode(item.key);
       }
     },
-    save(item) {
+    save(item) { //todo: 修改时，就算没成功显示的内容也会改变
       delete item.value.rendered_title;
       if (item.key === "new-one") {
         // 如果key为new-one 则表示这是一条需要新增的数据，需要删除key
         delete item.key;
+        this.items.shift()
       }
       db.instance.put(
         item, 
@@ -204,7 +205,6 @@ export default {
         },
         err => this.messageBox.showMessage(err)
       );
-      this.items.shift()
       this.exitEditMode()
     },
 

@@ -20,7 +20,8 @@ export default class Sender {
         const dev = process.env.NODE_ENV === "development"
         if(!Sender.instance){
             const axiosInstance = axios.create({
-                baseURL: dev ? "http://127.0.0.1:8000" : "http://www.fern-li.cn",
+                // baseURL: dev ? "http://127.0.0.1:8000" : "http://www.fern-li.cn",
+                baseURL: "http://www.fern-li.cn",
                 xsrfCookieName:'csrftoken',
                 xsrfHeaderName:'X-CSRFtoken',
                 withCredentials: true

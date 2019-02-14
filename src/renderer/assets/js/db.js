@@ -162,7 +162,7 @@ class MySQLDb extends Db {
             data["key"] = key
         }
         this.sender.post("note",data)
-        .then(data => success(data && {key:data["key"],value:data}))
+        .then(response => success(response && {key:response["key"],value:response}))
         .catch(err)
     }
 
