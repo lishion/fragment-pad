@@ -64,7 +64,6 @@ class LevelDb extends Db {
             var path = require('path')
             var dbPath = path.join(__dirname, '../../../../mydb')
             var db = levelup(encode(leveldown(dbPath), { valueEncoding: 'json' }))
-            console.info(LevelDb.instance)
             LevelDb.instance = new LevelDb(db)
            
         }
@@ -86,14 +85,17 @@ class LevelDb extends Db {
     }
 
     put(item, success, error) {
-        const callback = (key, value, err) => err ?  error("同步失败") : success({key:key, value:value})
+        const callback = (key, value, err) => {
+            const item = key && {key:key, value:value}
+            err ?  error("同步失败") : success(item)
+        }
         if (!item.key) { //如果key不存在，则表示这是一个新增的数据
             this.autoIncrementKey((key) => {
                 this.levelDb.put(key, item.value, err => callback(key, item.value, err)) //存入数据库 
             })
             return
         }
-        this.levelDb.put(item.key, item.value, err => callback(item.key, item.value, err)) //存入数据库 
+        this.levelDb.put(item.key, item.value, err => callback(null, item.value, err)) //存入数据库 
     }
 
     deleteById(id, func) {
@@ -120,7 +122,7 @@ class LevelDb extends Db {
             var replacedContent = this.replaceMany(marked_content, keywords, renderHighlight)
             if (replacedContent !== marked_content || replacedTitle !== title) {
                 data.value.rendered_title = replacedTitle
-                data.value.marked_content = replacedContent
+                data.value.heighlighted_content = replacedContent
                 func(data)
             }
 
@@ -179,11 +181,9 @@ class MySQLDb extends Db {
             var marked_content = data.value.marked_content
             var replacedTitle = this.replaceMany(title, keywords, renderHighlight)
             var replacedContent = this.replaceMany(marked_content, keywords, renderHighlight)
-            if (replacedContent !== marked_content || replacedTitle !== title) {
-                data.value.rendered_title = replacedTitle
-                data.value.marked_content = replacedContent
-                func(data)
-            }
+            data.value.rendered_title = replacedTitle
+            data.value.heighlighted_content = replacedContent
+            func(data)
         })
     }
     

@@ -7,7 +7,7 @@
                 </el-col>
                 <el-col :span="4">
                     <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('on-delete',itemKey)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
-                    <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('on-sync',itemKey)" v-if="!remoteModel&&sync!==1">{{sync}}</el-button>
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('on-sync',itemKey)" v-if="!remoteModel"></el-button>
                 </el-col>
             </el-row>
         </div>
@@ -51,7 +51,7 @@ import { remote } from 'electron';
 
 export default {
     name:"infocard",
-    props:['itemKey','searchMode','editingItemKey','sync'],
+    props:['itemKey','searchMode','editingItemKey'],
     computed:{
         remoteModel(){
             return this.$store.state.Fragment.remoteModel

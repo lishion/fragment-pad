@@ -41,17 +41,17 @@
           @on-modify="modify(item)"
           @on-sync="sync(item)"
           :itemKey="item.key"
-          :sync="item.value.sync"
           :searchMode="searchMode"
           :editingItemKey="editingItemKey"
           :style="{backgroundColor: 'rgba(255, 255, 255,' + alpha + ')'}"
         >
           <template slot="title">
-            <div v-html="item.value.rendered_title" v-if="item.value.rendered_title"></div>
+            <div v-html="item.value.rendered_title" v-if="searchMode"></div>
             <div v-else>{{item.value.title}}</div>
           </template>
           <template slot="content">
-            <div v-html="item.value.marked_content"></div>
+            <div v-html="item.value.heighlighted_content" v-if="searchMode"></div>
+            <div v-else v-html="item.value.marked_content"></div>
           </template>
         </infocard>
       </div>
@@ -156,16 +156,14 @@ export default {
         }
       };
     },
-    sync(item){
-      const value = {...item["value"]}
-      if("rendered_title" in value){
-        delete value["rendered_title"]
-      }
+    sync(item) {
+      this.deleteHightField(item)
+      const value = { ...item["value"] };
       db.remoteDb.put(
-        {"value":value}, 
+        { value: value },
         () => this.messageBox.success("同步成功"),
         err => this.messageBox.failed(err)
-      )
+      );
     },
     reload() {
       // 重新加载页面
@@ -181,6 +179,11 @@ export default {
       this.$set(this.edit_able, this.editingItemKey, false);
       this.editingItemKey = null;
     },
+    exitSearchMode() {
+      this.searchMode = false;
+      Bus.$emit("cancel-search");
+      this.icon = "el-icon-view";
+    },
     addEmptyCard() {
       if (this.editingItemKey == null) {
         var item = this.getEmptyItem();
@@ -188,24 +191,30 @@ export default {
         this.editMode(item.key);
       }
     },
-    save(item) { //todo: 修改时，就算没成功显示的内容也会改变
-      delete item.value.rendered_title;
+    deleteHightField(item){
+       delete item.value.rendered_title;
+       delete item.value.heighlighted_content
+    },
+    save(item) {
+      //todo: 修改时，就算没成功显示的内容也会改变
+      this.deleteHightField(item)
       if (item.key === "new-one") {
         // 如果key为new-one 则表示这是一条需要新增的数据，需要删除key
         delete item.key;
-        this.items.shift()
+        this.items.shift();
       }
       db.instance.put(
-        item, 
+        item,
         data => {
-          this.messageBox.success("成功啦^_^")
-          if(data){
-            this.items.unshift(data)
+          this.messageBox.success("成功啦^_^");
+          if (data) {
+            this.items.unshift(data);
           }
         },
         err => this.messageBox.showMessage(err)
       );
-      this.exitEditMode()
+      this.searchMode && this.exitSearchMode()
+      this.exitEditMode();
     },
 
     cancel(item = null) {
@@ -217,10 +226,8 @@ export default {
         this.exitEditMode();
       } else if (this.searchMode) {
         // 退出搜索模式
-        this.searchMode = false;
+        this.exitSearchMode()
         this.reload();
-        Bus.$emit("cancel-search");
-        this.icon = "el-icon-view";
       }
     },
     modify(item) {
@@ -246,7 +253,7 @@ export default {
           if (this.items.length <= 4) {
             this.loadData();
           }
-        }  
+        }
       });
     }
   },
@@ -256,12 +263,21 @@ export default {
       setting.setAlpha(alpha);
     });
     //登录成功、改变存储模式时自动切换数据显示
-    Bus.$on(["login-success", "change-storage-model"], () => {
+    Bus.$on(["login-success"], () => {
       this.reload();
     });
+    Bus.$on(["change-storage-model"],()=>{
+      if(this.searchMode){
+        this.exitSearchMode()
+      }
+      this.reload();
+    })
     // 滚动时搜索框自动消失
     Bus.$on("on-scrolly", top => {
       this.showSearch = top ? "block" : "none";
+    });
+    Bus.$on("refersh", () => {
+      this.reload();
     });
     ipcRender.on("cancel", () => {
       this.cancel(this.editingItemKey);
