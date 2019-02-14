@@ -266,7 +266,7 @@ export default {
       setting.setAlpha(alpha);
     });
     //登录成功、改变存储模式时自动切换数据显示
-    Bus.$on(["login-success"], () => {
+    Bus.$on(["login-state-change"], () => {
       this.reload();
     });
     Bus.$on(["change-storage-model"],()=>{

@@ -18,13 +18,19 @@
     </div>
     <splitline :color="'rgb(240,235,213)'"></splitline>
     <div class="login-input">
-      <div v-if="displayLoginForm" style="width:100%">
-        <el-tag :style="{width:'100%',textAlign:'center'}" :type="tagType">{{userStatus}}</el-tag>
+      <div v-if="isLogin" style="width:100%">
+        <el-button
+          :style="{width:'100%',textAlign:'center'}"
+          @click="loginOrOut"
+          :type="tagType"
+          size="small"
+          plain
+        >{{userStatus}}</el-button>
       </div>
       <div v-else>
         <el-input v-model="user.username" placeholder="用户名"></el-input>
         <el-input v-model="user.password" placeholder="密码"></el-input>
-        <el-button size="mini" :style="{width:'100%'}" @click="login">登录</el-button>
+        <el-button size="mini" :style="{width:'100%'}" @click="loginOrOut">登录</el-button>
       </div>
     </div>
     <splitline :color="'rgb(240,235,213)'"></splitline>
@@ -43,9 +49,6 @@
 }
 </style>
 
-
-
-
 <script>
 import Bus from "../assets/js/bus";
 import { UserSetting, MessageBox } from "../assets/js/utils";
@@ -53,7 +56,7 @@ import Sender from "../assets/js/sender";
 import { open } from "fs";
 import splitline from "./split-line";
 import { constants } from "http2";
-
+import { sep } from "path";
 
 const setting = UserSetting.getInstance();
 const ipc = require("electron").ipcRenderer;
@@ -98,9 +101,9 @@ export default {
       user: { username: "", password: "" },
       messageBox: new MessageBox(this),
       isRemoteMode: false, // true: 远程模式, false: 本地模式
-      displayLoginForm: false,
-      tagType: "",
-      userStatus: "已登录"
+      isLogin: true,
+      tagType: "primary",
+      userStatus: "登录"
     };
   },
   methods: {
@@ -119,24 +122,43 @@ export default {
     },
     login() {
       sender
-        .get("fetch_csrf_token")
-        .then(() => sender.post("login", this.user))
+        .post("login", this.user)
         .then(() => {
           this.messageBox.success("登录成功");
-          this.userStatus = "已登录";
-          this.tagType = "";
-          this.displayLoginForm = true;
-          Bus.$emit("login-success");
+          this.tagType = "primary";
+          this.userStatus = "已登录|退出";
+          this.isLogin = true;
+          Bus.$emit("login-state-change");
         })
         .catch(message => this.messageBox.failed(message));
     },
+    logout() {
+      sender
+        .get("logout")
+        .then(() => {
+          this.userStatus = "登录";
+          this.isLogin = false;
+          Bus.$emit("login-state-change");
+        })
+        .catch(message => this.messageBox.failed(message));
+    },
+    loginOrOut() {
+      if (this.userStatus === "网络错误") {
+        return;
+      }
+      if (this.isLogin) {
+        this.logout();
+      } else {
+        this.login();
+      }
+    },
     storageModelChange(isRemoteMode) {
-      const storageModel = isRemoteMode ? "remote" : "local"
+      const storageModel = isRemoteMode ? "remote" : "local";
       setting.setDbType(storageModel);
-      if(isRemoteMode){
-        this.$store.commit("switchToRemote")
-      }else{
-        this.$store.commit("switchToLocal")
+      if (isRemoteMode) {
+        this.$store.commit("switchToRemote");
+      } else {
+        this.$store.commit("switchToLocal");
       }
       Bus.$emit("change-storage-model");
     }
@@ -155,24 +177,24 @@ export default {
     sender
       .get("status")
       .then(() => {
-        this.userStatus = "已登录";
-        this.tagType = "";
-        this.displayLoginForm = true;
+        this.userStatus = "已登录|退出";
+        this.tagType = "primary"
+        this.isLogin = true;
       })
       .catch(message => {
         if (message.indexOf("未登录") !== -1) {
-          this.displayLoginForm = false;
+          this.isLogin = false;
         } else {
-          this.displayLoginForm = true;
+          this.isLogin = true;
           this.userStatus = "网络错误";
-          this.tagType = "warning"
+          this.tagType = "warning";
         }
       });
-    if(setting.getDbType() === "remote"){
-      this.isRemoteMode = true
-      this.$store.commit("switchToRemote")
-    }else{
-      this.$store.commit("switchToLocal")
+    if (setting.getDbType() === "remote") {
+      this.isRemoteMode = true;
+      this.$store.commit("switchToRemote");
+    } else {
+      this.$store.commit("switchToLocal");
     }
   }
 };
