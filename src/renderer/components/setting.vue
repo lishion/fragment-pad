@@ -128,6 +128,8 @@ export default {
           this.tagType = "primary";
           this.userStatus = "已登录|退出";
           this.isLogin = true;
+          this.isRemoteMode = true
+          this.storageModelChange(this.isRemoteMode)
           Bus.$emit("login-state-change");
         })
         .catch(message => this.messageBox.failed(message));
