@@ -11,7 +11,7 @@
                 </el-col>
             </el-row>
         </div>
-        <div class="text item" @click="$emit('on-modify')">
+        <div class="text item" @dblclick="$emit('on-modify')">
             <slot name="content"></slot>
         </div>
     </el-card>
