@@ -57,7 +57,7 @@
       </div>
     </el-main>
 
-    <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy"></div>
+    <div v-infinite-scroll="loadMore" infinite-scroll-disabled="true" infinite-scroll-distance="10"></div>
   </el-container>
 </template>
 
@@ -142,6 +142,7 @@ export default {
       );
     },
     loadMore: function() {
+      console.info("test");
       if (!this.searchMode) {
         this.loadData();
       }
@@ -157,7 +158,7 @@ export default {
       };
     },
     sync(item) {
-      this.deleteHightField(item)
+      this.deleteHightField(item);
       const value = { ...item["value"] };
       db.remoteDb.put(
         { value: value },
@@ -191,13 +192,13 @@ export default {
         this.editMode(item.key);
       }
     },
-    deleteHightField(item){
-       delete item.value.rendered_title;
-       delete item.value.heighlighted_content
+    deleteHightField(item) {
+      delete item.value.rendered_title;
+      delete item.value.heighlighted_content;
     },
     save(item) {
       //todo: 修改时，就算没成功显示的内容也会改变
-      this.deleteHightField(item)
+      this.deleteHightField(item);
       if (item.key === "new-one") {
         // 如果key为new-one 则表示这是一条需要新增的数据，需要删除key
         delete item.key;
@@ -213,11 +214,11 @@ export default {
         },
         err => this.messageBox.showMessage(err)
       );
-      if(this.searchMode){
+      if (this.searchMode) {
         this.exitSearchMode();
-        this.reload() 
+        this.reload();
       }
-      this.exitEditMode()
+      this.exitEditMode();
     },
 
     cancel(item = null) {
@@ -229,7 +230,7 @@ export default {
         this.exitEditMode();
       } else if (this.searchMode) {
         // 退出搜索模式
-        this.exitSearchMode()
+        this.exitSearchMode();
         this.reload();
       }
     },
@@ -269,12 +270,12 @@ export default {
     Bus.$on(["login-state-change"], () => {
       this.reload();
     });
-    Bus.$on(["change-storage-model"],()=>{
-      if(this.searchMode){
-        this.exitSearchMode()
+    Bus.$on(["change-storage-model"], () => {
+      if (this.searchMode) {
+        this.exitSearchMode();
       }
       this.reload();
-    })
+    });
     // 滚动时搜索框自动消失
     Bus.$on("on-scrolly", top => {
       this.showSearch = top ? "block" : "none";
