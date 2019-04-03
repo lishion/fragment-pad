@@ -21,7 +21,7 @@ export default class Sender {
         if(!Sender.instance){
             const axiosInstance = axios.create({
                 // baseURL: dev ? "http://127.0.0.1:8000" : "http://www.fern-li.cn",
-                baseURL: "http://www.fern-li.cn",
+                baseURL: "http://148.70.232.85",
                 xsrfCookieName:'csrftoken',
                 xsrfHeaderName:'X-CSRFtoken',
                 withCredentials: true
