@@ -31,7 +31,7 @@
       <div v-for="item in items" :key="item.key" class="card">
         <!--如果是编辑模式，则显示编辑界面-->
         <addcard v-if="edit_able[item.key]" :item="item" @on-save="save" id="addcard"></addcard>
-
+        
         <!--否则显示普通界面-->
         <!--searchMode||editingItemKey 用于控制删除按钮是否可用-->
         <infocard
@@ -40,7 +40,7 @@
           @on-delete="onDeleteSuccess"
           @on-modify="modify(item)"
           @on-sync="sync(item)"
-          :itemKey="item.key"
+          :item="item"
           :searchMode="searchMode"
           :editingItemKey="editingItemKey"
           :style="{backgroundColor: 'rgba(255, 255, 255,' + alpha + ')'}"
@@ -108,7 +108,7 @@ let ipcRender = require("electron").ipcRenderer;
 
 export default {
   name: "index",
-  components: { infocard, addcard },
+  components: { infocard, addcard},
   directives: { infiniteScroll },
   latestKey: null,
   data: function() {
@@ -142,7 +142,6 @@ export default {
       );
     },
     loadMore: function() {
-      console.info("test");
       if (!this.searchMode) {
         this.loadData();
       }

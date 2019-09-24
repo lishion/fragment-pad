@@ -6,8 +6,12 @@
                     <slot name="title"></slot>
                 </el-col>
                 <el-col :span="4">
-                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('on-delete',itemKey)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
-                    <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('on-sync',itemKey)" v-if="!remoteModel"></el-button>
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('on-delete',item.key)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('on-sync',item.key)" v-if="!remoteModel"></el-button>
+                    <el-popover trigger="click" width="800">
+                        <fragmentInfo :visible.sync="dialogTableVisible" :content="item.value.content"></fragmentInfo>
+                        <el-button slot="reference" style="padding: 3px 0" type="text" icon="el-icon-star-off"></el-button>
+                    </el-popover>
                 </el-col>
             </el-row>
         </div>
@@ -26,7 +30,6 @@
           padding-top: 1em;
           padding-right: 1em;
           padding-bottom: 1em;
-       
           border-left: 2px dashed whitesmoke;
     }
     .line {
@@ -46,12 +49,17 @@
 
 <script>
 let ipcRender = require('electron').ipcRenderer
-import { mapState } from 'vuex'
 import { remote } from 'electron';
-
+import fragmentInfo from "./fragment-info"
 export default {
     name:"infocard",
-    props:['itemKey','searchMode','editingItemKey'],
+    components: {fragmentInfo},
+    props:['item','searchMode','editingItemKey'],
+    data: function(){
+        return {
+            dialogTableVisible : false,
+        }
+    },
     computed:{
         remoteModel(){
             return this.$store.state.Fragment.remoteModel
