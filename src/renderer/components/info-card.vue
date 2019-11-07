@@ -8,10 +8,6 @@
                 <el-col :span="4">
                     <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('on-delete',item.key)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
                     <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('on-sync',item.key)" v-if="!remoteModel"></el-button>
-                    <el-popover trigger="click" width="800">
-                        <fragmentInfo :visible.sync="dialogTableVisible" :content="item.value.content"></fragmentInfo>
-                        <el-button slot="reference" style="padding: 3px 0" type="text" icon="el-icon-star-off"></el-button>
-                    </el-popover>
                 </el-col>
             </el-row>
         </div>
@@ -50,10 +46,8 @@
 <script>
 let ipcRender = require('electron').ipcRenderer
 import { remote } from 'electron';
-import fragmentInfo from "./fragment-info"
 export default {
     name:"infocard",
-    components: {fragmentInfo},
     props:['item','searchMode','editingItemKey'],
     data: function(){
         return {

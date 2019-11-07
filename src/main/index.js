@@ -11,8 +11,7 @@ if (process.env.NODE_ENV !== 'development') {
 
 let mainWindow
 var path = require('path')
-var ipcMain = require('electron').ipcMain
-const dialog = require('electron').dialog
+const {dialog, ipcMain} = require('electron')
 let fs = require('fs');
 
 const winURL = process.env.NODE_ENV === 'development'
@@ -90,7 +89,6 @@ app.on('window-all-closed', () => {
 })
 
 
-
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
@@ -134,7 +132,6 @@ ipcMain.on('open-file-dialog', function (event) {
       return
     }
     let file = files[0]
-    let sourceExt = path.extname(file)
     /**
      * 目前动态替换 pack 后的文件有一个缺点
      * 所有被替换的文件之前必须被pack 
@@ -145,7 +142,6 @@ ipcMain.on('open-file-dialog', function (event) {
     copyFile(files[0],path.join(__dirname, filePath),()=>{
       event.sender.send('selected-directory', ".jpg")
     })
-    
   })
 })
 
@@ -158,4 +154,9 @@ ipcMain.on('on-bg-set',()=>{
 
 ipcMain.on('open-console',()=>{
   mainWindow.webContents.openDevTools()
+})
+
+ipcMain.on('get-copy-text', (event, target)=>{
+    const { clipboard } = require("electron")
+    event.returnValue = clipboard.readText()
 })

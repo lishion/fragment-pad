@@ -22,6 +22,13 @@
               @click="addEmptyCard"
               :disabled="searchMode||editingItemKey!=null"
             ></el-button>
+            <el-button
+              slot="reference"
+              icon="el-icon-document-copy"
+              type="text"
+              @click="addFromCopyboard"
+              :disabled="searchMode||editingItemKey!=null"
+            ></el-button>
           </div>
         </el-col>
       </el-row>
@@ -103,6 +110,7 @@ import infiniteScroll from "vue-infinite-scroll";
 import { MessageBox, UserSetting } from "../assets/js/utils";
 import db from "../assets/js/db.js";
 import Bus from "../assets/js/bus";
+import { log } from 'util';
 let setting = UserSetting.getInstance();
 let ipcRender = require("electron").ipcRenderer;
 
@@ -219,7 +227,6 @@ export default {
       }
       this.exitEditMode();
     },
-
     cancel(item = null) {
       if (item !== null) {
         //取消编辑操作
@@ -258,6 +265,20 @@ export default {
           }
         }
       });
+    },
+    addFromCopyboard(){
+        const copyText = ipcRender.sendSync("get-copy-text")
+        if (copyText){
+            const emptyItem = this.getEmptyItem()
+            emptyItem.key = null
+            emptyItem.value.marked_content = copyText
+            emptyItem.value.content = copyText
+            emptyItem.value.rendered_title = copyText
+            emptyItem.value.title = "我是不是忘了写标题??"
+            this.save(emptyItem)
+        }else{
+            this.messageBox.showMessage("粘贴板为空")
+        }
     }
   },
   mounted() {
