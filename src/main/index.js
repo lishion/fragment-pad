@@ -160,3 +160,8 @@ ipcMain.on('get-copy-text', (event, target)=>{
     const { clipboard } = require("electron")
     event.returnValue = clipboard.readText()
 })
+
+ipcMain.on('copy', (event, text)=>{
+    const { clipboard } = require("electron")
+    clipboard.writeText(text)
+})

@@ -7,8 +7,8 @@
                     <slot name="title"></slot>
                 </el-col>
                 <el-col :span="4">
-                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('on-delete',item.key)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
-                    <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('on-sync',item.key)" v-if="!remoteModel"></el-button>
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('delete',item.key)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('sync',item.key)" v-if="!remoteModel"></el-button>
                 </el-col>
             </el-row>
         </div>
@@ -18,12 +18,12 @@
                 <el-col :span="16">
                 </el-col>
                 <el-col :span="4">
-                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('on-delete',item.key)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
-                    <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('on-sync',item.key)" v-if="!remoteModel"></el-button>
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('delete',item.key)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('sync',item.key)" v-if="!remoteModel"></el-button>
                 </el-col>
             </el-row>
         </div>
-        <div class="text item" @dblclick="$emit('on-modify')">
+        <div class="text item" @dblclick="$emit('modify')" @mousedown="mousedown" @mouseup="mouseup">
             <slot name="content"></slot>
         </div>
     </el-card>
@@ -64,12 +64,30 @@ export default {
     data: function(){
         return {
             dialogTableVisible : false,
+            mousedownPosition: { clientX: 0, clientY: 0}
         }
     },
     computed:{
         remoteModel(){
             return this.$store.state.Fragment.remoteModel
         }
+    },
+    methods:{
+        mousedown(e){
+            this.mousedownPosition.clientX = e.clientX
+            this.mousedownPosition.clientY = e.clientY
+        },
+        mouseup(e){
+            // 鼠标按钮松开时，如果鼠标存在移动距离，则认为鼠标存在选则文本的操作
+            const isMousePositionMoved = (start, end) => Math.abs(end - start) > 0
+            const isMouseXAxisMoved = isMousePositionMoved(e.clientX, this.mousedownPosition.clientX)
+            const isMouseYAxisMoved = isMousePositionMoved(e.clientY, this.mousedownPosition.clientY)
+            const isMouseMoved = isMouseXAxisMoved && isMouseYAxisMoved
+            if (isMouseMoved) {
+                this.$emit("select", { clientX: e.x, clientY: e.y}) // 传递鼠标移动时间到父组件
+            }
+        }
+
     },
     mounted(){
        var doms =  document.getElementsByClassName('content-url')

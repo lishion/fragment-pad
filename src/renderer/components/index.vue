@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container @click.native="clickWindow">
     <!-- header 包括搜索以及添加按钮 -->
     <el-header id="header" :style="{display:showSearch}">
       <el-row type="flex" justify="center">
@@ -44,9 +44,10 @@
         <infocard
           v-else
           id="infocard"
-          @on-delete="onDeleteSuccess"
-          @on-modify="modify(item)"
-          @on-sync="sync(item)"
+          @delete="onDeleteSuccess"
+          @modify="modify(item)"
+          @sync="sync(item)"
+          @select="showPasteIcon"
           :item="item"
           :searchMode="searchMode"
           :editingItemKey="editingItemKey"
@@ -63,7 +64,7 @@
         </infocard>
       </div>
     </el-main>
-
+    <el-button circle type="plain" size="mini" icon="el-icon-document-copy" :style="pasteIconStyle" @click="copy"></el-button>
     <div v-infinite-scroll="loadMore" infinite-scroll-disabled="true" infinite-scroll-distance="10"></div>
   </el-container>
 </template>
@@ -113,7 +114,6 @@ import Bus from "../assets/js/bus";
 import { log } from 'util';
 let setting = UserSetting.getInstance();
 let ipcRender = require("electron").ipcRenderer;
-
 export default {
   name: "index",
   components: { infocard, addcard},
@@ -132,7 +132,9 @@ export default {
       canInput: true,
       canDelete: true,
       alpha: setting.getAlphaOr(50) / 100,
-      showSearch: true
+      showSearch: true,
+      pasteIconStyle: {display: 'none', left: 0, top: 0, position: 'fixed'},
+      pasteIconTimer: null
     };
   },
   methods: {
@@ -234,7 +236,10 @@ export default {
           this.items.shift();
         }
         this.exitEditMode();
-      } else if (this.searchMode) {
+      } else if (this.pasteIconStyle.display === 'block'){
+          this.pasteIconStyle.display = 'none'
+      }
+      else if (this.searchMode) {
         // 退出搜索模式
         this.exitSearchMode();
         this.reload();
@@ -278,6 +283,20 @@ export default {
         }else{
             this.messageBox.showMessage("粘贴板为空")
         }
+    },
+    showPasteIcon(clientPosition){
+        this.pasteIconTimer && clearTimeout(this.pasteIconTimer) // 取消上一次设置的粘贴按钮自动消失
+        this.pasteIconStyle.left = clientPosition.clientX + 'px'
+        this.pasteIconStyle.top = clientPosition.clientY + 'px'
+        this.pasteIconStyle.display = 'block'
+        this.pasteIconTimer = setTimeout(()=>this.pasteIconStyle.display = 'none', 1500) // 1.5 秒后粘贴按钮自动消失
+    },
+    copy(){
+        const selectedText = window.getSelection().toString()
+        ipcRender.send('copy', selectedText)
+        this.pasteIconStyle.display = 'none' // 粘贴按钮点击后，隐藏粘贴按钮
+    },
+    clickWindow(){
     }
   },
   mounted() {
