@@ -47,7 +47,7 @@ export default {
     save(raw_text,mark_text){
         let title = this.item.value.title;
         if (title.match(/^\s+?$/) || title === "") {
-            this.item.value.title = "我是不是忘了写标题??";
+            this.item.value.title = "";
         }
         this.item.value.marked_content = mark_text
         this.item.value.content = raw_text

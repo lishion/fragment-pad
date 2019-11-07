@@ -1,9 +1,21 @@
 <template>
     <el-card class="box-card" style="margin-bottom: 18px;border:0px" shadow="hover" header-style="background-color:#409EFF" >
-        <div slot="header">
+        <!--标题存在则显示-->
+        <div slot="header" v-if="item.value.title">
             <el-row :gutter="20" type="flex" justify="space-between">
                 <el-col :span="16">
                     <slot name="title"></slot>
+                </el-col>
+                <el-col :span="4">
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('on-delete',item.key)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
+                    <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('on-sync',item.key)" v-if="!remoteModel"></el-button>
+                </el-col>
+            </el-row>
+        </div>
+        <!--否则只显示删除按钮-->
+        <div v-else>
+            <el-row :gutter="20" type="flex" justify="space-between">
+                <el-col :span="16">
                 </el-col>
                 <el-col :span="4">
                     <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('on-delete',item.key)" :disabled="searchMode||(editingItemKey!=null)"></el-button>

@@ -274,7 +274,6 @@ export default {
             emptyItem.value.marked_content = copyText
             emptyItem.value.content = copyText
             emptyItem.value.rendered_title = copyText
-            emptyItem.value.title = "我是不是忘了写标题??"
             this.save(emptyItem)
         }else{
             this.messageBox.showMessage("粘贴板为空")
