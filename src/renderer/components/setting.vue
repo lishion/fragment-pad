@@ -33,7 +33,7 @@
         <el-button size="mini" :style="{width:'100%'}" @click="loginOrOut">登录</el-button>
       </div>
     </div>
-    <splitline :color="'rgb(240,235,213)'"></splitline>
+    <el-divider style="color='rgb(240,235,213)'"></el-divider>
     <el-button size="mini" :style="{width:'100%'}" @click="openConsole">控制台</el-button>
   </div>
 </template>
