@@ -124,7 +124,6 @@ export default {
       items: [],
       edit_able: {},
       messageBox: new MessageBox(this),
-      uuid: require("uuid"),
       keywords: "",
       icon: "el-icon-view",
       editingItemKey: null,
@@ -257,7 +256,7 @@ export default {
         this.items.push(data);
       });
       this.icon = "el-icon-search";
-      Bus.$emit("on-search");
+      Bus.$emit("search");
     },
     onDeleteSuccess(key) {
       var indexToDelete = -1;
@@ -296,11 +295,9 @@ export default {
         ipcRender.send('copy', selectedText)
         this.pasteIconStyle.display = 'none' // 粘贴按钮点击后，隐藏粘贴按钮
     },
-    clickWindow(){
-    }
   },
   mounted() {
-    Bus.$on("on-tp-change", alpha => {
+    Bus.$on("tp-change", alpha => {
       this.alpha = alpha / 100.0;
       setting.setAlpha(alpha);
     });
@@ -315,7 +312,7 @@ export default {
       this.reload();
     });
     // 滚动时搜索框自动消失
-    Bus.$on("on-scrolly", top => {
+    Bus.$on("scrolly", top => {
       this.showSearch = top ? "block" : "none";
     });
     Bus.$on("refersh", () => {
@@ -327,4 +324,3 @@ export default {
   }
 };
 </script>
-

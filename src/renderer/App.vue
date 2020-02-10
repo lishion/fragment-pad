@@ -81,18 +81,18 @@ export default {
       this.clientHeight = `${document.documentElement.clientHeight +
         window.scrollY}px`;
       if (rollHeigth > 20) {
-        Bus.$emit("on-scrolly", false);
+        Bus.$emit("scrolly", false);
       } else if (rollHeigth <= 0) {
         window.clearInterval(this.timer);
-        Bus.$emit("on-scrolly", true);
+        Bus.$emit("scrolly", true);
       }
     };
 
     //进入/退出搜索时，滚动条设置为0，避免继承上个页面的滚动条
-    Bus.$on(["on-search","cancel-search","on-delete"], () => this.clientHeight = "600px")
+    Bus.$on(["search","cancel-search","delete"], () => this.clientHeight = "600px")
 
     // 更换壁纸
-    Bus.$on("on-bg-set", bg => {
+    Bus.$on("bg-set", bg => {
       this.bg_url = require(`./assets/bg/${bg}`);
       userSetting.setBackgroundImage(bg);
     });

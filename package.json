@@ -24,7 +24,7 @@
     "axios": "^0.16.2",
     "clipboard-polyfill": "^2.8.6",
     "electron-store": "^2.0.0",
-    "element-ui": "^2.12.0",
+    "element-ui": "^2.13.0",
     "encoding-down": "^5.0.4",
     "highlight.js": "^9.12.0",
     "http2": "^3.3.7",

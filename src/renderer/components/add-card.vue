@@ -51,7 +51,7 @@ export default {
         }
         this.item.value.marked_content = mark_text
         this.item.value.content = raw_text
-        this.$emit("on-save", this.item)
+        this.$emit("save", this.item)
     }
   },
   mounted(){

@@ -1,21 +1,9 @@
 <template>
     <el-card class="box-card" style="margin-bottom: 18px;border:0px" shadow="hover" header-style="background-color:#409EFF" >
-        <!--标题存在则显示-->
-        <div slot="header" v-if="item.value.title">
+        <div :slot="displayTitle">
             <el-row :gutter="20" type="flex" justify="space-between">
                 <el-col :span="16">
-                    <slot name="title"></slot>
-                </el-col>
-                <el-col :span="4">
-                    <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('delete',item.key)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
-                    <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('sync',item.key)" v-if="!remoteModel"></el-button>
-                </el-col>
-            </el-row>
-        </div>
-        <!--否则只显示删除按钮-->
-        <div v-else>
-            <el-row :gutter="20" type="flex" justify="space-between">
-                <el-col :span="16">
+                    <slot name="title" v-if="item.value.title"></slot>
                 </el-col>
                 <el-col :span="4">
                     <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('delete',item.key)" :disabled="searchMode||(editingItemKey!=null)"></el-button>
@@ -40,14 +28,6 @@
           padding-bottom: 1em;
           border-left: 2px dashed whitesmoke;
     }
-    .line {
-        height: 1px;
-        margin-top: 1em;
-        margin-bottom: 1em;
-        margin-left: 0;
-        margin-right: 0;
-        background:whitesmoke;
-    }
     .box-card{
         font-family:Consola,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
     }
@@ -64,7 +44,9 @@ export default {
     data: function(){
         return {
             dialogTableVisible : false,
-            mousedownPosition: { clientX: 0, clientY: 0}
+            mousedownPosition: { clientX: 0, clientY: 0},
+            displayTitle: this.item.value.title ? "header" : null // 当标题存在时，displayTitle 为 header，显示header及分割线。
+            // 只显示简单删除按钮，不显示分割线
         }
     },
     computed:{
@@ -87,7 +69,6 @@ export default {
                 this.$emit("select", { clientX: e.x, clientY: e.y}) // 传递鼠标移动时间到父组件
             }
         }
-
     },
     mounted(){
        var doms =  document.getElementsByClassName('content-url')

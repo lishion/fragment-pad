@@ -111,11 +111,11 @@ export default {
       if (value === "__set__") {
         ipc.send("open-file-dialog");
       } else {
-        this.$emit("on-bg-change", value);
+        this.$emit("bg-change", value);
       }
     },
     onTransparencyChange(value) {
-      Bus.$emit("on-tp-change", value);
+      Bus.$emit("tp-change", value);
     },
     openConsole() {
       ipc.send("open-console");
@@ -173,7 +173,7 @@ export default {
         let bg = `user${ext}`;
         setting.setBackgroundImage(bg);
         setting.setUserBackGroundImage(bg);
-        ipc.send("on-bg-set");
+        ipc.send("bg-set");
       }
     });
     sender
