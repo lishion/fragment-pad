@@ -29,7 +29,7 @@
       </div>
       <div v-else>
         <el-input v-model="user.username" placeholder="用户名"></el-input>
-        <el-input v-model="user.password" placeholder="密码"></el-input>
+        <el-input v-model="user.password" placeholder="密码" show-password></el-input>
         <el-button size="mini" :style="{width:'100%'}" @click="loginOrOut">登录</el-button>
       </div>
     </div>
