@@ -1,5 +1,5 @@
 <template>
-  <el-container @click.native="clickWindow">
+  <el-container>
     <!-- header 包括搜索以及添加按钮 -->
     <el-header id="header" :style="{display:showSearch}">
       <el-row type="flex" justify="center">
@@ -37,7 +37,7 @@
     <el-main style="margin-top: 60px" id="main">
       <div v-for="item in items" :key="item.key" class="card">
         <!--如果是编辑模式，则显示编辑界面-->
-        <addcard v-if="edit_able[item.key]" :item="item" @on-save="save" id="addcard"></addcard>
+        <addcard v-if="edit_able[item.key]" :item="item" @save="save" id="addcard"></addcard>
         
         <!--否则显示普通界面-->
         <!--searchMode||editingItemKey 用于控制删除按钮是否可用-->
@@ -205,6 +205,7 @@ export default {
       delete item.value.heighlighted_content;
     },
     save(item) {
+      console.info("test")
       //todo: 修改时，就算没成功显示的内容也会改变
       this.deleteHightField(item);
       if (item.key === "new-one") {
