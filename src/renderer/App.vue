@@ -10,7 +10,7 @@
         </el-col>
         <el-col :span="2">
           <el-popover placement="bottom" trigger="click">
-            <setting @on-bg-change="changeBackground"></setting>
+            <setting @bg-change="changeBackground"></setting>
             <el-button slot="reference" type="text" icon="el-icon-setting"></el-button>
           </el-popover>
           <!--最小化按钮-->

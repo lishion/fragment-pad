@@ -145,7 +145,7 @@ ipcMain.on('open-file-dialog', function (event) {
   })
 })
 
-ipcMain.on('on-bg-set',()=>{
+ipcMain.on('bg-set',()=>{
   if(process.env.NODE_ENV !== "development"){
     app.relaunch()
     app.exit(0)
