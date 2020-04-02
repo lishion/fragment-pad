@@ -1,6 +1,6 @@
 # fragment-pad
 
-fragment-pad 是一款为整理碎片知识而开发的 APP ,基于 Electron 编写，支持 linex,win,macOS. 
+fragment-pad 是一款为整理碎片知识而开发的 APP，基于 Electron 编写，支持 linux,win,macOS. 
 
 ## 应用定位
 1. 用于整理小而常用的知识点，这些知识点太小，以至于不便于记录在笔记中
