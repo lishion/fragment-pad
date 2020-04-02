@@ -205,7 +205,6 @@ export default {
       delete item.value.heighlighted_content;
     },
     save(item) {
-      console.info("test")
       //todo: 修改时，就算没成功显示的内容也会改变
       this.deleteHightField(item);
       if (item.key === "new-one") {
@@ -218,6 +217,7 @@ export default {
         data => {
           this.messageBox.success("成功啦^_^");
           if (data) {
+            console.info(data)
             this.items.unshift(data);
           }
         },
