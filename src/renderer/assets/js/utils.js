@@ -16,6 +16,9 @@ class MessageBox {
             type: 'success',
         })
     }
+    info(msg){
+        this.context.$message({"message": msg});
+    }
 
     showMessage(isSuccess) {
         isSuccess ? this.failed("失败了orz") : this.success("成功啦^^")

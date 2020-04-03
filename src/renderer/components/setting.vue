@@ -61,9 +61,7 @@ import { sep } from "path";
 const setting = UserSetting.getInstance();
 const ipc = require("electron").ipcRenderer;
 const path = require("path");
-const sender = Client.getInstance();
-const LOCAL_MODEL = false;
-const REMOTE_MODEL = true;
+const client = Client.getInstance();
 export default {
   components: { splitline },
   data: function() {
@@ -121,21 +119,21 @@ export default {
       ipc.send("open-console");
     },
     login() {
-      sender
+      client
         .post("login", this.user)
         .then(() => {
           this.messageBox.success("登录成功");
           this.tagType = "primary";
-          this.userStatus = "已登录|退出";
+          this.userStatus = `${this.user.username}|退出`;
           this.isLogin = true;
-          this.isRemoteMode = true
-          this.storageModelChange(this.isRemoteMode)
+          this.isRemoteMode = true;
+          this.storageModelChange(this.isRemoteMode);
           Bus.$emit("login-state-change");
         })
         .catch(message => this.messageBox.failed(message));
     },
     logout() {
-      sender
+      client
         .get("logout")
         .then(() => {
           this.userStatus = "登录";
@@ -176,7 +174,7 @@ export default {
         ipc.send("bg-set");
       }
     });
-    sender
+    client
       .get("status")
       .then(() => {
         this.userStatus = "已登录|退出";

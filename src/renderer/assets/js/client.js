@@ -60,18 +60,18 @@ export default class Client {
                     resolve(response.data.data);
                 }
             })
-                .catch(e => {
-                    if (e.response) {
-                        const data = e.response.data;
-                        if (data && "message" in data) {
-                            reject(data.message)
-                        } else {
-                            reject("网络错误")
-                        }
+            .catch(e => {
+                if (e.response) {
+                    const data = e.response.data;
+                    if (data && "message" in data) {
+                        reject(data.message)
                     } else {
                         reject("网络错误")
                     }
-                });
+                } else {
+                    reject("网络错误")
+                }
+            });
         });
     }
 }
