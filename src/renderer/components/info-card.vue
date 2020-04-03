@@ -10,7 +10,7 @@
                     <el-button style="padding: 3px 0" type="text" icon="el-icon-close" @click="$emit('delete',note.id)"
                                :disabled="searchMode||(editingNote!=null)"></el-button>
                     <el-button style="padding: 3px 0" type="text" icon="el-icon-refresh" @click="$emit('sync',note.id)"
-                               v-if="!remoteModel"></el-button>
+                               v-if="!remoteModel" :disabled="searchMode"></el-button>
                 </el-col>
             </el-row>
         </div>
