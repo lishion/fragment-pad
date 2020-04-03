@@ -1,6 +1,8 @@
 //自增key
 //由于leveDB是按照key排序的，所以为了保证显示是按照添加的顺序，所以需要自定义增长策略
 //策略为0000000000xxx,xxx是顺序增长的数字，如果数字位数不够，则会填充到length长度
+import th from "element-ui/src/locale/lang/th";
+
 class AutoIncrementID {
     constructor(length = 32) {
         this.length = length
@@ -136,11 +138,17 @@ class LevelDb extends Db {
         })
     }
 
-    search(keywords, func) {
+    contains(note, keyword){
+        return note.title.indexOf(keyword) !== -1 || note.rendered_content.indexOf(keyword) !== -1;
+    }
+
+    search(keyword, func) {
         const queryOption = {"reverse": true, "limit": -1};
-        this.levelDb.createReadStream(queryOption).on('data', (note) => {
-            const highlightedNote = this.highlightNote(Note.fromLevelDBRecord(note), keywords)
-            func(highlightedNote)
+        this.levelDb.createReadStream(queryOption).on('data', (record) => {
+            const note = Note.fromLevelDBRecord(record);
+            if (this.contains(note, keyword)) {
+                func(this.highlightNote(note, keyword))
+            }
         })
     }
 }
@@ -167,9 +175,7 @@ class MySQLDb extends Db {
     searchMatch(keyword, func) {
         this.client.get(`note?keyword=${keyword}`)
             .then((notes) => {
-                for (const note of notes) {
-                    Array.from(notes).forEach(note => func(Note.fromMySQLRecord(note)))
-                }
+                Array.from(notes).forEach(note => func(Note.fromMySQLRecord(note)))
             }).catch(message => console.error(`搜索时出现${message}`))
     }
 
@@ -191,6 +197,7 @@ class MySQLDb extends Db {
 
     search(keywords, func) {
         this.searchMatch(keywords, (note) => {
+            console.info(note)
             const highlightNote = this.highlightNote(note, keywords)
             func(highlightNote)
         })
