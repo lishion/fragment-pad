@@ -14,7 +14,7 @@
     ></el-switch>
     <splitline :color="'rgb(240,235,213)'"></splitline>
     <div class="block">
-      <el-slider v-model="initValue" :min="0" :max="100" @change="onTransparencyChange"></el-slider>
+      <el-slider v-model="initValue" :min="0" :max="100" @input="onTransparencyChange"></el-slider>
     </div>
     <splitline :color="'rgb(240,235,213)'"></splitline>
     <div class="login-input">
@@ -33,7 +33,7 @@
         <el-button size="mini" :style="{width:'100%'}" @click="loginOrOut">登录</el-button>
       </div>
     </div>
-    <el-divider style="color='rgb(240,235,213)'"></el-divider>
+    <el-divider style='color: rgb(240,235,213)'></el-divider>
     <el-button size="mini" :style="{width:'100%'}" @click="openConsole">控制台</el-button>
   </div>
 </template>
@@ -52,7 +52,7 @@
 <script>
 import Bus from "../assets/js/bus";
 import { UserSetting, MessageBox } from "../assets/js/utils";
-import Sender from "../assets/js/sender";
+import Client from "../assets/js/client";
 import { open } from "fs";
 import splitline from "./split-line";
 import { constants } from "http2";
@@ -61,7 +61,7 @@ import { sep } from "path";
 const setting = UserSetting.getInstance();
 const ipc = require("electron").ipcRenderer;
 const path = require("path");
-const sender = Sender.getInstance();
+const sender = Client.getInstance();
 const LOCAL_MODEL = false;
 const REMOTE_MODEL = true;
 export default {
