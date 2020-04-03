@@ -174,11 +174,10 @@ export default {
         ipc.send("bg-set");
       }
     });
-    client
-      .get("status")
-      .then(() => {
-        this.userStatus = "已登录|退出";
-        this.tagType = "primary"
+    client.get("status")
+      .then((user) => {
+        this.userStatus = `${user.username}|退出`;
+        this.tagType = "primary";
         this.isLogin = true;
       })
       .catch(message => {
