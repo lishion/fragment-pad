@@ -17,7 +17,7 @@ fragment-pad 是一款为整理碎片知识而开发的 APP，基于 Electron �
 4. npm run build: linux|windows
 
 或者直接下载 release 版本:
-[fragment-pad-release](https://dev.tencent.com/u/lin3x/p/fragment-pad/git/releases)
+[fragment-pad-release](https://github.com/lishion/fragment-pad/releases)
 
 ## 使用方法
 1. 点击 + 新增
@@ -27,7 +27,7 @@ fragment-pad 是一款为整理碎片知识而开发的 APP，基于 Electron �
 5. 输入内容回车进行搜索, esc 退出搜索界面
 
 ## demo
-![](https://www.z4a.net/images/2018/12/25/fragment-pad.png)
+![](https://s1.ax1x.com/2020/04/07/G2dVaV.md.gif)
 
 ## 感谢
 * 输入，渲染部分采用了@hinesboy的[mavonEditor](https://github.com/hinesboy/mavonEditor#readme)
