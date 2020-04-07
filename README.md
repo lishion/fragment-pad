@@ -27,7 +27,7 @@ fragment-pad 是一款为整理碎片知识而开发的 APP，基于 Electron �
 5. 输入内容回车进行搜索, esc 退出搜索界面
 
 ## demo
-演示地址 https://s1.ax1x.com/2020/04/07/G2dVaV.md.gif
+演示地址 https://s1.ax1x.com/2020/04/07/G2dVaV.gif
 
 ## 感谢
 * 输入，渲染部分采用了@hinesboy的[mavonEditor](https://github.com/hinesboy/mavonEditor#readme)
